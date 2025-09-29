@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { PacientesModule } from './pacientes/pacientes.module';
+import { FamiliarsModule } from './familiars/familiars.module';
+import { EstadoCivilsModule } from './estado_civils/estado_civils.module';
 
 @Module({
   imports: [
@@ -25,6 +28,9 @@ import { AuthModule } from './auth/auth.module';
     }),
     UsersModule,
     AuthModule,
+    PacientesModule,
+    FamiliarsModule,
+    EstadoCivilsModule,
   ],
   controllers: [],
   providers: [],
