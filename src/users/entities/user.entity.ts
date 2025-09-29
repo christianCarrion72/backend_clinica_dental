@@ -1,26 +1,38 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Role } from './rol.entity';
 
-@Entity()
+@Entity('usuarios')
 export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ primary: true, generated: true })
-    id: number;
+  @Column({ length: 100 })
+  nombre: string;
 
-    @Column({ unique: true, nullable: false })
-    email: string;
+  @Column({ length: 100, unique: true })
+  correo: string;
 
-    @Column({nullable: false})
-    contraseña: string;
+  @Column({ length: 255 })
+  contraseña: string;
 
-    @Column({ default: 'user' })
-    rol: string;
+  @Column({ length: 20 })
+  telefono: string;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @Column({ length: 255 })
+  direccion: string;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @Column({ default: true })
+  estado: boolean;
 
-    @DeleteDateColumn()
-    deleteAt: Date;
+  @ManyToOne(() => Role, (role) => role.usuarios)
+  rol: Role;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

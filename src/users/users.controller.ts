@@ -1,40 +1,65 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { RolesGuard } from '../auth/guard/roles.guard';
+import { HasRoles } from '../auth/decorators/roles.decorator';
+import { Roles } from '../auth/enums/roles.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('users')
 @ApiBearerAuth()
-//@UseGuards(AuthGuard)
 @Controller('users')
+@UseGuards(AuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
   @Get()
-  @UseGuards(AuthGuard)
+  @HasRoles(Roles.ADMIN)
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @HasRoles(Roles.ADMIN)
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Post('dentist')
+  @HasRoles(Roles.ADMIN)
+  createDentist(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.createDentist(createUserDto);
+  }
+
+  @Put('dentist/:id')
+  @HasRoles(Roles.ADMIN)
+  updateDentist(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.updateDentist(id, updateUserDto);
+  }
+
+  @Post('administrative')
+  @HasRoles(Roles.ADMIN)
+  createAdministrative(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.createAdministrative(createUserDto);
+  }
+
+  @Put('administrative/:id')
+  @HasRoles(Roles.ADMIN)
+  updateAdministrative(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.updateAdministrative(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @HasRoles(Roles.ADMIN)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id);
   }
 }

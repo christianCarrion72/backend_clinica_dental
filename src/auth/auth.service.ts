@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
-
 import * as bcryptjs from 'bcryptjs';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -12,19 +11,20 @@ export class AuthService {
         private readonly usersService: UsersService,
         private readonly jwtService: JwtService,
     ){}
-    async register({email, contraseña}: RegisterDto){
-        const user = await this.usersService.findOneByEmail(email);
+
+    /*async register({correo, contraseña}: RegisterDto){
+        const user = await this.usersService.findOneByEmail(correo);
         if (user) {
             throw new BadRequestException('Usuario ya existe');
         }
         return await this.usersService.create({
-            email, 
+            correo, 
             contraseña: await bcryptjs.hash(contraseña, 10),
         });
-    }
+    }*/
     
-    async login({ email, contraseña }: LoginDto ){
-        const user = await this.usersService.findOneByEmail(email);
+    async login({ correo, contraseña }: LoginDto ){
+        const user = await this.usersService.findOneByEmail(correo);
         if (!user) {
             throw new UnauthorizedException('Credenciales incorrectas');
         }
@@ -34,12 +34,18 @@ export class AuthService {
             throw new UnauthorizedException('Credenciales incorrectas');
         }
 
-        const payload = { email: user.email };
+        const payload = { 
+            correo: user.correo,
+            id: user.id,
+            rol: user.rol
+        };
+        
         const token = await this.jwtService.signAsync(payload);
         
         return {
             token,
-            email,
+            correo,
+            rol: user.rol?.nombre
         };
     }
 }
