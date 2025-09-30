@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEstadoCivilDto } from './dto/create-estado_civil.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateEstadoCivilDto } from './dto/create-estado-civil.dto';
+import { EstadoCivil } from './entities/estado_civil.entity';
 import { UpdateEstadoCivilDto } from './dto/update-estado_civil.dto';
 
 @Injectable()
 export class EstadoCivilsService {
-  create(createEstadoCivilDto: CreateEstadoCivilDto) {
-    return 'This action adds a new estadoCivil';
+  constructor(
+    @InjectRepository(EstadoCivil)
+    private readonly estadoCivilRepository: Repository<EstadoCivil>,
+  ) {}
+
+  async create(createEstadoCivilDto: CreateEstadoCivilDto): Promise<EstadoCivil> {
+    const estadoCivil = this.estadoCivilRepository.create(createEstadoCivilDto);
+    return await this.estadoCivilRepository.save(estadoCivil);
   }
 
-  findAll() {
-    return `This action returns all estadoCivils`;
+  async findAll(): Promise<EstadoCivil[]> {
+    return await this.estadoCivilRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} estadoCivil`;
+  async findOne(id: number): Promise<EstadoCivil> {
+    const estadoCivil = await this.estadoCivilRepository.findOne({
+      where: { id },
+      relations: ['pacientes'],
+    });
+
+    if (!estadoCivil) {
+      throw new NotFoundException(`Estado civil con ID ${id} no encontrado`);
+    }
+
+    return estadoCivil;
   }
 
-  update(id: number, updateEstadoCivilDto: UpdateEstadoCivilDto) {
-    return `This action updates a #${id} estadoCivil`;
+  async update(id: number, updateEstadoCivilDto: UpdateEstadoCivilDto): Promise<EstadoCivil> {
+    const estadoCivil = await this.findOne(id);
+    this.estadoCivilRepository.merge(estadoCivil, updateEstadoCivilDto);
+    return await this.estadoCivilRepository.save(estadoCivil);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} estadoCivil`;
+  async remove(id: number): Promise<void> {
+    const estadoCivil = await this.findOne(id);
+    await this.estadoCivilRepository.softRemove(estadoCivil);
   }
 }
