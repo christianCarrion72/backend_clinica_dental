@@ -4,16 +4,31 @@ import { Repository } from 'typeorm';
 import { CreateFamiliarDto } from './dto/create-familiar.dto';
 import { UpdateFamiliarDto } from './dto/update-familiar.dto';
 import { Familiar } from './entities/familiar.entity';
+import { Paciente } from '../pacientes/entities/paciente.entity';
 
 @Injectable()
 export class FamiliarsService {
   constructor(
     @InjectRepository(Familiar)
     private readonly familiarRepository: Repository<Familiar>,
+    @InjectRepository(Paciente)
+    private readonly pacienteRepository: Repository<Paciente>,
   ) {}
 
   async create(createFamiliarDto: CreateFamiliarDto): Promise<Familiar> {
-    const familiar = this.familiarRepository.create(createFamiliarDto);
+    const paciente = await this.pacienteRepository.findOne({
+      where: { id: createFamiliarDto.paciente_id },
+    });
+
+    if (!paciente) {
+      throw new NotFoundException(`Paciente con ID ${createFamiliarDto.paciente_id} no encontrado`);
+    }
+
+    const familiar = this.familiarRepository.create({
+      ...createFamiliarDto,
+      paciente: paciente,
+    });
+    
     return await this.familiarRepository.save(familiar);
   }
 

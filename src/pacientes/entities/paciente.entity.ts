@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { EstadoCivil } from '../../estado_civils/entities/estado_civil.entity';
 import { Familiar } from '../../familiars/entities/familiar.entity';
 
@@ -30,4 +30,13 @@ export class Paciente {
 
     @OneToMany(() => Familiar, (familiar) => familiar.paciente)
     familiares: Familiar[];
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @DeleteDateColumn()
+    deletedAt: Date;
 }
