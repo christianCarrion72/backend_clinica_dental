@@ -4,6 +4,14 @@ import { Role } from '../../users/entities/rol.entity';
 import { User } from '../../users/entities/user.entity';
 import { InitialSeeder } from './initial.seeder';
 import { ConfigModule } from '@nestjs/config';
+import { Dentist } from 'src/users/entities/dentist.entity';
+import { HorarioFecha } from 'src/horario_fechas/entities/horario_fecha.entity';
+import { Horario } from 'src/horarios/entities/horario.entity';
+import { Paciente } from 'src/pacientes/entities/paciente.entity';
+import { Cita } from 'src/citas/entities/cita.entity';
+import { EstadoCivil } from 'src/estado_civils/entities/estado_civil.entity';
+import { Familiar } from 'src/familiars/entities/familiar.entity';
+import { Administrative } from 'src/users/entities/administrative.entity';
 
 @Module({
   imports: [
@@ -24,7 +32,18 @@ import { ConfigModule } from '@nestjs/config';
         rejectUnauthorized: false
       } : false,
     }),
-    TypeOrmModule.forFeature([Role, User])
+    TypeOrmModule.forFeature([
+      Role, 
+      User, 
+      Dentist, 
+      HorarioFecha, 
+      Horario, 
+      Paciente, 
+      Cita, 
+      EstadoCivil, 
+      Familiar, 
+      Administrative,
+    ]),
   ],
   providers: [InitialSeeder],
   exports: [InitialSeeder],

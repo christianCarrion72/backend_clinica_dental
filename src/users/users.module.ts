@@ -7,10 +7,11 @@ import { Role } from './entities/rol.entity';
 import { Dentist } from './entities/dentist.entity';
 import { Administrative } from './entities/administrative.entity';
 import { AuthModule } from '../auth/auth.module';
+import { HorarioFecha } from 'src/horario_fechas/entities/horario_fecha.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Role, Dentist, Administrative]),
+    TypeOrmModule.forFeature([User, Role, Dentist, Administrative, HorarioFecha]),
     AuthModule
   ],
   controllers: [UsersController],

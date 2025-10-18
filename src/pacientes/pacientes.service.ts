@@ -1,25 +1,42 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { CreatePacienteDto } from './dto/create-paciente.dto';
 import { UpdatePacienteDto } from './dto/update-paciente.dto';
 import { Paciente } from './entities/paciente.entity';
+import { EstadoCivil } from 'src/estado_civils/entities/estado_civil.entity';
 
 @Injectable()
 export class PacientesService {
   constructor(
     @InjectRepository(Paciente)
     private readonly pacienteRepository: Repository<Paciente>,
+
+    @InjectRepository(EstadoCivil)
+    private readonly estadoCivilRepository: Repository<EstadoCivil>
   ) {}
 
   async create(createPacienteDto: CreatePacienteDto): Promise<Paciente> {
-    const paciente = this.pacienteRepository.create(createPacienteDto);
-    return await this.pacienteRepository.save(paciente);
+    const pacienteData: Partial<Paciente> = {
+      nombre: createPacienteDto.nombre,
+      fecha_nacimiento: createPacienteDto.fecha_nacimiento,
+      edad: createPacienteDto.edad,
+      ocupacion: createPacienteDto.ocupacion,
+      telefono: createPacienteDto.telefono,
+      celular: createPacienteDto.celular
+    }
+
+    const estadoCivil = await this.estadoCivilRepository.findOneBy({id: createPacienteDto.estado_civil_id})
+    if (!estadoCivil) throw new BadRequestException('estado civil no encontrado');
+    pacienteData.estadoCivil = estadoCivil;
+    
+    return await this.pacienteRepository.save(pacienteData);
   }
 
   async findAll(): Promise<Paciente[]> {
     return await this.pacienteRepository.find({
       relations: ['estadoCivil', 'familiares'],
+      order: { id: 'ASC' }
     });
   }
 
@@ -37,8 +54,19 @@ export class PacientesService {
   }
 
   async update(id: number, updatePacienteDto: UpdatePacienteDto): Promise<Paciente> {
-    const paciente = await this.findOne(id);
-    this.pacienteRepository.merge(paciente, updatePacienteDto);
+    const paciente = await this.pacienteRepository.findOneBy({id});
+    if (!paciente) throw new NotFoundException('Paciente no encontrado');
+    if (updatePacienteDto.nombre) paciente.nombre = updatePacienteDto.nombre;
+    if (updatePacienteDto.fecha_nacimiento) paciente.fecha_nacimiento = updatePacienteDto.fecha_nacimiento;
+    if (updatePacienteDto.edad) paciente.edad = updatePacienteDto.edad;
+    if (updatePacienteDto.ocupacion) paciente.ocupacion = updatePacienteDto.ocupacion;
+    if (updatePacienteDto.telefono) paciente.telefono = updatePacienteDto.telefono;
+    if (updatePacienteDto.celular) paciente.celular = updatePacienteDto.celular;
+    if (updatePacienteDto.estado_civil_id) {
+      const estadoCivil = await this.estadoCivilRepository.findOneBy({id: updatePacienteDto.estado_civil_id});
+      if (!estadoCivil) throw new BadRequestException('estado civil no encontrado');
+      paciente.estadoCivil = estadoCivil;
+    }
     return await this.pacienteRepository.save(paciente);
   }
 
