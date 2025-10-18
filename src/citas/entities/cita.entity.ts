@@ -16,6 +16,9 @@ export class Cita {
     @Column()
     observaciones: string;
 
+    @Column({ length: 255, nullable: true })
+    externalEventId?: string;
+
     @ManyToOne(() =>Paciente, (paciente) => paciente.citas, { nullable: false, eager: true })
     paciente: Paciente;
 

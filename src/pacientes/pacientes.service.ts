@@ -25,8 +25,10 @@ export class PacientesService {
       telefono: createPacienteDto.telefono,
       celular: createPacienteDto.celular
     }
-
-    const estadoCivil = await this.estadoCivilRepository.findOneBy({id: createPacienteDto.estado_civil_id})
+    const existeCorreo = await this.pacienteRepository.findBy({email: createPacienteDto.email});
+    if (existeCorreo) throw new BadRequestException('El correo ya esta registrado');
+    pacienteData.email = createPacienteDto.email;
+    const estadoCivil = await this.estadoCivilRepository.findOneBy({id: createPacienteDto.estado_civil_id});
     if (!estadoCivil) throw new BadRequestException('estado civil no encontrado');
     pacienteData.estadoCivil = estadoCivil;
     
@@ -61,6 +63,11 @@ export class PacientesService {
     if (updatePacienteDto.edad) paciente.edad = updatePacienteDto.edad;
     if (updatePacienteDto.ocupacion) paciente.ocupacion = updatePacienteDto.ocupacion;
     if (updatePacienteDto.telefono) paciente.telefono = updatePacienteDto.telefono;
+    if (updatePacienteDto.email) {
+      const existeCorreo = await this.pacienteRepository.findBy({email: updatePacienteDto.email});
+      if (existeCorreo) throw new BadRequestException('El correo ya esta registrado');
+        paciente.email = updatePacienteDto.email;
+    }
     if (updatePacienteDto.celular) paciente.celular = updatePacienteDto.celular;
     if (updatePacienteDto.estado_civil_id) {
       const estadoCivil = await this.estadoCivilRepository.findOneBy({id: updatePacienteDto.estado_civil_id});

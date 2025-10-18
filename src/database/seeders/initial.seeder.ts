@@ -50,7 +50,7 @@ export class InitialSeeder {
     await this.createEstadoCivil();
     await this.createPacientes();
     await this.createFamiliares();
-    await this.createCitas();
+    //await this.createCitas();
   }
 
   private async createRoles() {
@@ -302,6 +302,7 @@ export class InitialSeeder {
         nombre: 'Juan Pérez',
         fecha_nacimiento: new Date('1990-05-12'),
         ocupacion: 'Ingeniero',
+        email: 'paciente1@gmail.com',
         telefono: '33445566',
         celular: '78945612',
       },
@@ -309,6 +310,7 @@ export class InitialSeeder {
         nombre: 'María Gómez',
         fecha_nacimiento: new Date('1985-10-03'),
         ocupacion: 'Doctora',
+        email: 'paciente2@gmail.com',
         telefono: '22223333',
         celular: '76451238',
       },
@@ -316,6 +318,7 @@ export class InitialSeeder {
         nombre: 'Carlos López',
         fecha_nacimiento: new Date('2000-03-22'),
         ocupacion: 'Estudiante',
+        email: 'paciente3@gmail.com',
         telefono: '44445555',
         celular: '78456321',
       },
@@ -323,6 +326,7 @@ export class InitialSeeder {
         nombre: 'Ana Fernández',
         fecha_nacimiento: new Date('1995-07-18'),
         ocupacion: 'Abogada',
+        email: 'paciente4@gmail.com',
         telefono: '33336666',
         celular: '70125478',
       },

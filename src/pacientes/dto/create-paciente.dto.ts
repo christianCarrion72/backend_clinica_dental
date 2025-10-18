@@ -1,4 +1,4 @@
-import { IsString, IsDate, IsNumber, IsOptional, Length } from 'class-validator';
+import { IsString, IsDate, IsNumber, IsOptional, Length, IsEmail } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -17,6 +17,10 @@ export class CreatePacienteDto {
     @IsOptional()
     @IsNumber()
     edad?: number;
+
+    @ApiProperty({ description:'Correo del paciente', example: 'paciente1@gmail.com' })
+    @IsEmail()
+    email?: string;
 
     @ApiProperty({ description: 'ID del estado civil', example: 1 })
     @IsNumber()

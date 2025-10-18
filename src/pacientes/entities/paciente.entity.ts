@@ -17,6 +17,9 @@ export class Paciente {
     @Column({ nullable: true })
     edad: number;
 
+    @Column({ length: 100, nullable: true, unique: true })
+    email: string;
+
     @ManyToOne(() => EstadoCivil, (estadoCivil) => estadoCivil.pacientes, { nullable: true, eager: true})
     estadoCivil: EstadoCivil;
 

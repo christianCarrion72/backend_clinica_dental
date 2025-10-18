@@ -6,6 +6,7 @@ import { Cita } from './entities/cita.entity';
 import { Repository } from 'typeorm';
 import { Paciente } from 'src/pacientes/entities/paciente.entity';
 import { HorarioFecha } from 'src/horario_fechas/entities/horario_fecha.entity';
+import { CalendarService } from './services/calendar.service';
 
 @Injectable()
 export class CitasService {
@@ -13,12 +14,11 @@ export class CitasService {
   constructor(
     @InjectRepository(Cita)
     private readonly citasRepository: Repository<Cita>,
-
     @InjectRepository(Paciente)
     private readonly pacientesRepository: Repository<Paciente>,
-
     @InjectRepository(HorarioFecha)
-    private readonly horarioFechasRepository: Repository<HorarioFecha>
+    private readonly horarioFechasRepository: Repository<HorarioFecha>,
+    private readonly calendarService: CalendarService,
   ) {}
 
   async create(createCitaDto: CreateCitaDto) {
@@ -33,14 +33,22 @@ export class CitasService {
 
     const horarioFecha = await this.horarioFechasRepository.findOneBy({ id: createCitaDto.horarioFechaId});
     if (!horarioFecha) throw new BadRequestException('HorarioFecha no encontrado');
-    citaData.horarioFecha = horarioFecha;
-
-    if (!createCitaDto.observaciones) {
-      citaData.observaciones = 'Sin observaciones';
-    }else{
-      citaData.observaciones = createCitaDto.observaciones;
+    
+    if (!horarioFecha.disponible) {
+      throw new BadRequestException('El horario seleccionado ya se encuentra reservado');
     }
-    return await this.citasRepository.save(citaData);
+    
+    citaData.horarioFecha = horarioFecha;
+    citaData.observaciones = createCitaDto.observaciones || 'Sin observaciones';
+    const nuevaCita = await this.citasRepository.save(citaData);
+
+    horarioFecha.disponible = false;
+    await this.horarioFechasRepository.save(horarioFecha);
+
+    await this.calendarService.agregarAlCalendario(nuevaCita);
+    
+    const citaActualizada = await this.citasRepository.save(nuevaCita);
+    return citaActualizada;
   }
 
   async findAll() {
@@ -55,21 +63,50 @@ export class CitasService {
     const cita = await this.citasRepository.findOneBy({id});
     if (!cita) throw new NotFoundException('Cita no encontrada');
 
+    const horarioFechaAnterior = cita.horarioFecha;
+
     if (updateCitaDto.consultorio) cita.consultorio = updateCitaDto.consultorio;
     if (updateCitaDto.estado) cita.estado = updateCitaDto.estado;
     if (updateCitaDto.observaciones) cita.observaciones = updateCitaDto.observaciones;
+    
     if (updateCitaDto.horarioFechaId) {
-      const horarioFecha = await this.horarioFechasRepository.findOneBy({ id: updateCitaDto.horarioFechaId});
-      if (!horarioFecha) throw new BadRequestException('HorarioFecha no encontrado');
-      cita.horarioFecha = horarioFecha;
+      const nuevoHorarioFecha = await this.horarioFechasRepository.findOneBy({ 
+        id: updateCitaDto.horarioFechaId
+      });
+      if (!nuevoHorarioFecha) throw new BadRequestException('HorarioFecha no encontrado');
+      
+      if (!nuevoHorarioFecha.disponible) {
+        throw new BadRequestException('El horario seleccionado ya se encuentra reservado');
+      }
+
+      cita.horarioFecha = nuevoHorarioFecha;
+
+      nuevoHorarioFecha.disponible = false;
+      await this.horarioFechasRepository.save(nuevoHorarioFecha);
+
+      if (horarioFechaAnterior) {
+        const ahora = new Date();
+        const fechaHoraAnterior = this.combinarFechaYHora(
+          horarioFechaAnterior.fecha,
+          horarioFechaAnterior.horario.horaFin
+        );
+
+        if (fechaHoraAnterior > ahora) {
+          horarioFechaAnterior.disponible = true;
+          await this.horarioFechasRepository.save(horarioFechaAnterior);
+        }
+      }
     }
+    
     if (updateCitaDto.pacienteId) {
       const paciente = await this.pacientesRepository.findOneBy({ id: updateCitaDto.pacienteId});
       if (!paciente) throw new BadRequestException('Paciente no encontrado');
       cita.paciente = paciente;
     }
-
-    return await this.citasRepository.save(cita);
+    
+    const citaActualizada = await this.citasRepository.save(cita);
+    await this.calendarService.actualizarCalendario(citaActualizada);
+    return citaActualizada;
   }
 
   async remove(id: number) {
@@ -80,10 +117,34 @@ export class CitasService {
     await this.citasRepository.softDelete(id);
 
     if (cita.horarioFecha) {
-      cita.horarioFecha.disponible = true;
-      await this.horarioFechasRepository.save(cita.horarioFecha);
+      const ahora = new Date();
+      const fechaHoraFin = this.combinarFechaYHora(
+        cita.horarioFecha.fecha,
+        cita.horarioFecha.horario.horaFin
+      );
+
+      if (fechaHoraFin > ahora) {
+        cita.horarioFecha.disponible = true;
+        await this.horarioFechasRepository.save(cita.horarioFecha);
+      }
     }
-    
+
+    await this.calendarService.eliminarDeCalendario(cita);
     return { message: `Cita con id ${id} eliminada correctamente` };
+  }
+
+  /**
+   * Combina una fecha con una hora para crear un Date completo
+   * @param fecha Fecha en formato Date
+   * @param hora Hora en formato HH:mm:ss (string)
+   * @returns Date combinado
+   */
+  private combinarFechaYHora(fecha: Date, hora: string): Date {
+    const [horas, minutos, segundos] = hora.split(':').map(Number);
+    
+    const fechaLocal = new Date(fecha);
+    fechaLocal.setHours(horas, minutos, segundos, 0);
+    
+    return fechaLocal;
   }
 }
