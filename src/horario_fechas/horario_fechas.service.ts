@@ -3,7 +3,7 @@ import { CreateHorarioFechaDto } from './dto/create-horario_fecha.dto';
 import { UpdateHorarioFechaDto } from './dto/update-horario_fecha.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HorarioFecha } from './entities/horario_fecha.entity';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { Horario } from 'src/horarios/entities/horario.entity';
 import { Dentist } from 'src/users/entities/dentist.entity';
 
@@ -41,6 +41,7 @@ export class HorarioFechasService {
 
   async findAll() {
     return await this.horarioFechasRepository.find({
+      order: {id: 'ASC'},
       relations: ['horario', 'dentista'],
     });
   }
@@ -49,6 +50,38 @@ export class HorarioFechasService {
     const horarioFecha =  await this.horarioFechasRepository.findOneBy({id});
     if (!horarioFecha) {
       throw new NotFoundException('HorarioFecha no encontrado');
+    }
+
+    return horarioFecha;
+  }
+
+  async findHoraioFecha(fecha: string) {
+    const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!fechaRegex.test(fecha)) {
+      throw new BadRequestException('Formato de fecha inválido. Usa YYYY-MM-DD');
+    }
+
+    const [year, month, day] = fecha.split('-').map(Number);
+    
+    const inicio = new Date(year, month - 1, day, 0, 0, 0, 0);
+    
+    const fin = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+    if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
+      throw new BadRequestException('Fecha inválida');
+    }
+
+    const horarioFecha = await this.horarioFechasRepository.find({
+      where: { 
+        fecha: Between(inicio, fin), 
+        disponible: true 
+      },
+      relations: ['horario', 'dentista'],
+      order: { id: 'ASC' }
+    });
+
+    if (horarioFecha.length === 0) {
+      throw new NotFoundException('No hay horarios disponibles para esa fecha');
     }
 
     return horarioFecha;

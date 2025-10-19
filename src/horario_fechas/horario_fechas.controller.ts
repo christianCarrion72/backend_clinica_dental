@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { HorarioFechasService } from './horario_fechas.service';
 import { CreateHorarioFechaDto } from './dto/create-horario_fecha.dto';
 import { UpdateHorarioFechaDto } from './dto/update-horario_fecha.dto';
@@ -26,6 +26,12 @@ export class HorarioFechasController {
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return this.horarioFechasService.findOne(id);
+  }
+
+  @Get('fecha/:fecha')
+  async findHoraioFecha(@Param('fecha') fecha: string) {
+    console.log('Usaste el endpoint de horarios por fecha');
+    return this.horarioFechasService.findHoraioFecha(fecha);
   }
 
   @Patch(':id')
