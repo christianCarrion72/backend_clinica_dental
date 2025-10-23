@@ -28,6 +28,11 @@ export class CitasController {
     return this.citasService.findOne(id);
   }
 
+  @Get('dentista/:id')
+  async findForDentist(@Param('id_dentist') id: number){
+    return this.citasService.findForDentist(id);
+  }
+
   @Patch(':id')
   async update(@Param('id') id: number, @Body() updateCitaDto: UpdateCitaDto) {
     return this.citasService.update(id, updateCitaDto);

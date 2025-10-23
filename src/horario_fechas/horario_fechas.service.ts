@@ -80,9 +80,7 @@ export class HorarioFechasService {
       order: { id: 'ASC' }
     });
 
-    if (horarioFecha.length === 0) {
-      throw new NotFoundException('No hay horarios disponibles para esa fecha');
-    }
+    if (horarioFecha.length === 0) throw new NotFoundException('No hay horarios disponibles para esa fecha');
 
     return horarioFecha;
   }

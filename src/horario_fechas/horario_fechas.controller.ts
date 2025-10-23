@@ -30,7 +30,6 @@ export class HorarioFechasController {
 
   @Get('fecha/:fecha')
   async findHoraioFecha(@Param('fecha') fecha: string) {
-    console.log('Usaste el endpoint de horarios por fecha');
     return this.horarioFechasService.findHoraioFecha(fecha);
   }
 

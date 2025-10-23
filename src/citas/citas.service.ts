@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { Paciente } from 'src/pacientes/entities/paciente.entity';
 import { HorarioFecha } from 'src/horario_fechas/entities/horario_fecha.entity';
 import { CalendarService } from './services/calendar.service';
+import { Dentist } from 'src/users/entities/dentist.entity';
 
 @Injectable()
 export class CitasService {
@@ -18,6 +19,8 @@ export class CitasService {
     private readonly pacientesRepository: Repository<Paciente>,
     @InjectRepository(HorarioFecha)
     private readonly horarioFechasRepository: Repository<HorarioFecha>,
+    @InjectRepository(Dentist)
+    private readonly dentistRepository: Repository<Dentist>,
     private readonly calendarService: CalendarService,
   ) {}
 
@@ -55,6 +58,27 @@ export class CitasService {
     return await this.citasRepository.find();
   }
 
+  async findForDentist(id_dentist: number){
+    const dentista = await this.dentistRepository.findOne({
+      where: { id: id_dentist},
+      relations:['usuario']
+    });
+    if (!dentista) throw new BadRequestException('El dentista no existe');
+    
+    const dentistaHorario = await this.horarioFechasRepository.find({
+      where: {dentista: dentista, disponible: false }
+    });
+    if(!dentistaHorario) throw new NotFoundException('El dentista no tiene citas programdas');
+    
+    const citasPorDentista = await this.citasRepository.find({ 
+      where: {horarioFecha: dentistaHorario, estado: 'CONFIRMADO'},
+      order: {id: 'ASC'} 
+    });
+    if(!citasPorDentista) throw new NotFoundException('No tiene ninguna cita agendada en este momento');
+    
+    return citasPorDentista;
+  }
+
   async findOne(id: number) {
     return await this.citasRepository.findOneBy({id});
   }
@@ -75,9 +99,7 @@ export class CitasService {
       });
       if (!nuevoHorarioFecha) throw new BadRequestException('HorarioFecha no encontrado');
       
-      if (!nuevoHorarioFecha.disponible) {
-        throw new BadRequestException('El horario seleccionado ya se encuentra reservado');
-      }
+      if (!nuevoHorarioFecha.disponible) throw new BadRequestException('El horario seleccionado ya se encuentra reservado');
 
       cita.horarioFecha = nuevoHorarioFecha;
 

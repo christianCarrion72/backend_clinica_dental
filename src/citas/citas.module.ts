@@ -8,10 +8,11 @@ import { HorarioFecha } from 'src/horario_fechas/entities/horario_fecha.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { CalendarService } from './services/calendar.service';
 import { GoogleController } from './controllers/google.controller';
+import { Dentist } from 'src/users/entities/dentist.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Cita, Paciente, HorarioFecha]),
+    TypeOrmModule.forFeature([Cita, Paciente, HorarioFecha, Dentist]),
     AuthModule
   ],
   controllers: [CitasController, GoogleController],
