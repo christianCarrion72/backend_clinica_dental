@@ -62,4 +62,10 @@ export class UsersController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
+
+  @Get('dentistUser/:id')
+  @HasRoles(Roles.DENTIST)
+  async userDentisId(@Param('id', ParseIntPipe)id: number) {
+    return this.usersService.dentistUserId(id);
+  }
 }

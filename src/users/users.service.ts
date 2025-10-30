@@ -186,4 +186,15 @@ export class UsersService {
 
     return user;
   }
+
+  async dentistUserId(id: number): Promise<number> {
+    const dentistId = await this.dentistRepository.findOne({
+      where: {usuario: {id: id}},
+      relations: ['usuario']
+    });
+    if(!dentistId) throw new NotFoundException('El usuario no es dentista');
+    //console.log(dentistId.id);
+    
+    return dentistId.id;
+  }
 }

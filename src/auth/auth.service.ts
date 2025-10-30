@@ -45,7 +45,8 @@ export class AuthService {
         return {
             token,
             correo,
-            rol: user.rol?.nombre
+            rol: user.rol?.nombre,
+            id: user.id
         };
     }
 }

@@ -71,7 +71,7 @@ export class CitasService {
     if(!dentistaHorario) throw new NotFoundException('El dentista no tiene citas programdas');
     
     const citasPorDentista = await this.citasRepository.find({ 
-      where: {horarioFecha: dentistaHorario, estado: 'CONFIRMADO'},
+      where: {horarioFecha: dentistaHorario, estado: 'confirmada'},
       order: {id: 'ASC'} 
     });
     if(!citasPorDentista) throw new NotFoundException('No tiene ninguna cita agendada en este momento');
