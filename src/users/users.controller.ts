@@ -64,7 +64,7 @@ export class UsersController {
   }
 
   @Get('dentistUser/:id')
-  @HasRoles(Roles.DENTIST)
+  @HasRoles(Roles.DENTIST, Roles.ADMIN)
   async userDentisId(@Param('id', ParseIntPipe)id: number) {
     return this.usersService.dentistUserId(id);
   }
