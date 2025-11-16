@@ -60,13 +60,15 @@ export class CalendarService {
       await this.getAccessToken();
 
       const calendarId = process.env.GOOGLE_CALENDAR_ID;
-      
-      const fechaStr = cita.horarioFecha.fecha instanceof Date 
-        ? cita.horarioFecha.fecha.toISOString().split('T')[0]
-        : cita.horarioFecha.fecha;
-      
+
+      const fechaStr =
+        cita.horarioFecha.fecha instanceof Date
+          ? cita.horarioFecha.fecha.toISOString().split('T')[0]
+          : cita.horarioFecha.fecha;
+
       const [horas, minutos] = cita.horarioFecha.horario.horaInicio.split(':');
-      const [horasFin, minutosFin] = cita.horarioFecha.horario.horaFin.split(':');
+      const [horasFin, minutosFin] =
+        cita.horarioFecha.horario.horaFin.split(':');
 
       const fechaInicioStr = `${fechaStr}T${horas}:${minutos}:00`;
       const fechaFinStr = `${fechaStr}T${horasFin}:${minutosFin}:00`;
@@ -116,13 +118,15 @@ export class CalendarService {
       await this.getAccessToken();
 
       const calendarId = process.env.GOOGLE_CALENDAR_ID;
-      
-      const fechaStr = cita.horarioFecha.fecha instanceof Date 
-        ? cita.horarioFecha.fecha.toISOString().split('T')[0]
-        : cita.horarioFecha.fecha;
-      
+
+      const fechaStr =
+        cita.horarioFecha.fecha instanceof Date
+          ? cita.horarioFecha.fecha.toISOString().split('T')[0]
+          : cita.horarioFecha.fecha;
+
       const [horas, minutos] = cita.horarioFecha.horario.horaInicio.split(':');
-      const [horasFin, minutosFin] = cita.horarioFecha.horario.horaFin.split(':');
+      const [horasFin, minutosFin] =
+        cita.horarioFecha.horario.horaFin.split(':');
 
       const fechaInicioStr = `${fechaStr}T${horas}:${minutos}:00`;
       const fechaFinStr = `${fechaStr}T${horasFin}:${minutosFin}:00`;

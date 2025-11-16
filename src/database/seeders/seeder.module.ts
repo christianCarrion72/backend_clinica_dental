@@ -20,7 +20,7 @@ import { Administrative } from 'src/users/entities/administrative.entity';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: "postgres",
+      type: 'postgres',
       host: process.env.POSTGRES_HOST,
       port: 5432,
       username: process.env.POSTGRES_USER,
@@ -28,20 +28,23 @@ import { Administrative } from 'src/users/entities/administrative.entity';
       database: process.env.POSTGRES_DB,
       autoLoadEntities: true,
       synchronize: true,
-      ssl: process.env.DATABASE_SSL === 'true' ? {
-        rejectUnauthorized: false
-      } : false,
+      ssl:
+        process.env.DATABASE_SSL === 'true'
+          ? {
+              rejectUnauthorized: false,
+            }
+          : false,
     }),
     TypeOrmModule.forFeature([
-      Role, 
-      User, 
-      Dentist, 
-      HorarioFecha, 
-      Horario, 
-      Paciente, 
-      Cita, 
-      EstadoCivil, 
-      Familiar, 
+      Role,
+      User,
+      Dentist,
+      HorarioFecha,
+      Horario,
+      Paciente,
+      Cita,
+      EstadoCivil,
+      Familiar,
       Administrative,
     ]),
   ],

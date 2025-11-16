@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateHorarioFechaDto } from './dto/create-horario_fecha.dto';
 import { UpdateHorarioFechaDto } from './dto/update-horario_fecha.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,45 +13,48 @@ import { Dentist } from 'src/users/entities/dentist.entity';
 
 @Injectable()
 export class HorarioFechasService {
-
   constructor(
     @InjectRepository(HorarioFecha)
     private readonly horarioFechasRepository: Repository<HorarioFecha>,
 
-    @InjectRepository(Horario) 
+    @InjectRepository(Horario)
     private readonly horariosRepository: Repository<Horario>,
 
     @InjectRepository(Dentist)
-    private readonly dentistasRepository: Repository<Dentist>
-  ){}
+    private readonly dentistasRepository: Repository<Dentist>,
+  ) {}
 
   async create(createHorarioFechaDto: CreateHorarioFechaDto) {
     const horarioFechaData: Partial<HorarioFecha> = {
       fecha: createHorarioFechaDto.fecha,
-      disponible: createHorarioFechaDto.disponible
+      disponible: createHorarioFechaDto.disponible,
     };
 
-    const horario = await this.horariosRepository.findOneBy({id: createHorarioFechaDto.horarioId});
+    const horario = await this.horariosRepository.findOneBy({
+      id: createHorarioFechaDto.horarioId,
+    });
     if (!horario) throw new BadRequestException('Horario no encontrado');
 
-    const dentista = await this.dentistasRepository.findOneBy({id: createHorarioFechaDto.dentistaId});
+    const dentista = await this.dentistasRepository.findOneBy({
+      id: createHorarioFechaDto.dentistaId,
+    });
     if (!dentista) throw new BadRequestException('Dentista no encontrado');
 
     horarioFechaData.horario = horario;
-    horarioFechaData.dentista = dentista; 
+    horarioFechaData.dentista = dentista;
 
     return await this.horarioFechasRepository.save(horarioFechaData);
   }
 
   async findAll() {
     return await this.horarioFechasRepository.find({
-      order: {id: 'ASC'},
+      order: { id: 'ASC' },
       relations: ['horario', 'dentista'],
     });
   }
 
   async findOne(id: number) {
-    const horarioFecha =  await this.horarioFechasRepository.findOneBy({id});
+    const horarioFecha = await this.horarioFechasRepository.findOneBy({ id });
     if (!horarioFecha) {
       throw new NotFoundException('HorarioFecha no encontrado');
     }
@@ -58,13 +65,15 @@ export class HorarioFechasService {
   async findHoraioFecha(fecha: string) {
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!fechaRegex.test(fecha)) {
-      throw new BadRequestException('Formato de fecha inválido. Usa YYYY-MM-DD');
+      throw new BadRequestException(
+        'Formato de fecha inválido. Usa YYYY-MM-DD',
+      );
     }
 
     const [year, month, day] = fecha.split('-').map(Number);
-    
+
     const inicio = new Date(year, month - 1, day, 0, 0, 0, 0);
-    
+
     const fin = new Date(year, month - 1, day, 23, 59, 59, 999);
 
     if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
@@ -72,38 +81,46 @@ export class HorarioFechasService {
     }
 
     const horarioFecha = await this.horarioFechasRepository.find({
-      where: { 
-        fecha: Between(inicio, fin), 
-        disponible: true 
+      where: {
+        fecha: Between(inicio, fin),
+        disponible: true,
       },
       relations: ['horario', 'dentista'],
-      order: { id: 'ASC' }
+      order: { id: 'ASC' },
     });
 
-    if (horarioFecha.length === 0) throw new NotFoundException('No hay horarios disponibles para esa fecha');
+    if (horarioFecha.length === 0)
+      throw new NotFoundException('No hay horarios disponibles para esa fecha');
 
     return horarioFecha;
   }
 
   async update(id: number, updateHorarioFechaDto: UpdateHorarioFechaDto) {
-    const horarioFecha = await this.horarioFechasRepository.findOneBy({id});
-    if (!horarioFecha) throw new NotFoundException('HorarioFecha no encontrado');
+    const horarioFecha = await this.horarioFechasRepository.findOneBy({ id });
+    if (!horarioFecha)
+      throw new NotFoundException('HorarioFecha no encontrado');
 
     if (updateHorarioFechaDto.horarioId) {
-      const horario = await this.horariosRepository.findOneBy({id: updateHorarioFechaDto.horarioId});
+      const horario = await this.horariosRepository.findOneBy({
+        id: updateHorarioFechaDto.horarioId,
+      });
       if (!horario) throw new BadRequestException('Horario no encontrado');
       horarioFecha.horario = horario;
     }
 
     if (updateHorarioFechaDto.dentistaId) {
-      const dentista = await this.dentistasRepository.findOneBy({id: updateHorarioFechaDto.dentistaId});
+      const dentista = await this.dentistasRepository.findOneBy({
+        id: updateHorarioFechaDto.dentistaId,
+      });
       if (!dentista) throw new BadRequestException('Dentista no encontrado');
       horarioFecha.dentista = dentista;
     }
 
-    if (updateHorarioFechaDto.fecha) horarioFecha.fecha = updateHorarioFechaDto.fecha;
-    if (updateHorarioFechaDto.disponible != undefined) horarioFecha.disponible = updateHorarioFechaDto.disponible;
-    
+    if (updateHorarioFechaDto.fecha)
+      horarioFecha.fecha = updateHorarioFechaDto.fecha;
+    if (updateHorarioFechaDto.disponible != undefined)
+      horarioFecha.disponible = updateHorarioFechaDto.disponible;
+
     return await this.horarioFechasRepository.save(horarioFecha);
   }
 

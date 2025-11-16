@@ -21,14 +21,16 @@ export class FamiliarsService {
     });
 
     if (!paciente) {
-      throw new NotFoundException(`Paciente con ID ${createFamiliarDto.paciente_id} no encontrado`);
+      throw new NotFoundException(
+        `Paciente con ID ${createFamiliarDto.paciente_id} no encontrado`,
+      );
     }
 
     const familiar = this.familiarRepository.create({
       ...createFamiliarDto,
       paciente: paciente,
     });
-    
+
     return await this.familiarRepository.save(familiar);
   }
 
@@ -51,7 +53,10 @@ export class FamiliarsService {
     return familiar;
   }
 
-  async update(id: number, updateFamiliarDto: UpdateFamiliarDto): Promise<Familiar> {
+  async update(
+    id: number,
+    updateFamiliarDto: UpdateFamiliarDto,
+  ): Promise<Familiar> {
     const familiar = await this.findOne(id);
     this.familiarRepository.merge(familiar, updateFamiliarDto);
     return await this.familiarRepository.save(familiar);

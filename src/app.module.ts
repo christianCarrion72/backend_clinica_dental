@@ -18,7 +18,7 @@ import { SeederModule } from './database/seeders/seeder.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: "postgres",
+      type: 'postgres',
       host: process.env.POSTGRES_HOST,
       port: 5432,
       username: process.env.POSTGRES_USER,
@@ -26,9 +26,12 @@ import { SeederModule } from './database/seeders/seeder.module';
       database: process.env.POSTGRES_DB,
       autoLoadEntities: true,
       synchronize: true,
-      ssl: process.env.DATABASE_SSL === 'true' ? {
-        rejectUnauthorized: false
-      } : false,
+      ssl:
+        process.env.DATABASE_SSL === 'true'
+          ? {
+              rejectUnauthorized: false,
+            }
+          : false,
     }),
     UsersModule,
     AuthModule,

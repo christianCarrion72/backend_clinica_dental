@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCitaDto } from './dto/create-cita.dto';
 import { UpdateCitaDto } from './dto/update-cita.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,7 +15,6 @@ import { Dentist } from 'src/users/entities/dentist.entity';
 
 @Injectable()
 export class CitasService {
-
   constructor(
     @InjectRepository(Cita)
     private readonly citasRepository: Repository<Cita>,
@@ -27,20 +30,27 @@ export class CitasService {
   async create(createCitaDto: CreateCitaDto) {
     const citaData: Partial<Cita> = {
       estado: createCitaDto.estado,
-      consultorio: createCitaDto.consultorio
+      consultorio: createCitaDto.consultorio,
     };
 
-    const paciente = await this.pacientesRepository.findOneBy({ id: createCitaDto.pacienteId});
+    const paciente = await this.pacientesRepository.findOneBy({
+      id: createCitaDto.pacienteId,
+    });
     if (!paciente) throw new BadRequestException('Paciente no encontrado');
     citaData.paciente = paciente;
 
-    const horarioFecha = await this.horarioFechasRepository.findOneBy({ id: createCitaDto.horarioFechaId});
-    if (!horarioFecha) throw new BadRequestException('HorarioFecha no encontrado');
-    
+    const horarioFecha = await this.horarioFechasRepository.findOneBy({
+      id: createCitaDto.horarioFechaId,
+    });
+    if (!horarioFecha)
+      throw new BadRequestException('HorarioFecha no encontrado');
+
     if (!horarioFecha.disponible) {
-      throw new BadRequestException('El horario seleccionado ya se encuentra reservado');
+      throw new BadRequestException(
+        'El horario seleccionado ya se encuentra reservado',
+      );
     }
-    
+
     citaData.horarioFecha = horarioFecha;
     citaData.observaciones = createCitaDto.observaciones || 'Sin observaciones';
     const nuevaCita = await this.citasRepository.save(citaData);
@@ -49,7 +59,7 @@ export class CitasService {
     await this.horarioFechasRepository.save(horarioFecha);
 
     await this.calendarService.agregarAlCalendario(nuevaCita);
-    
+
     const citaActualizada = await this.citasRepository.save(nuevaCita);
     return citaActualizada;
   }
@@ -58,48 +68,57 @@ export class CitasService {
     return await this.citasRepository.find();
   }
 
-  async findForDentist(id_dentist: number){
+  async findForDentist(id_dentist: number) {
     const dentista = await this.dentistRepository.findOne({
-      where: { id: id_dentist},
-      relations:['usuario']
+      where: { id: id_dentist },
+      relations: ['usuario'],
     });
     if (!dentista) throw new BadRequestException('El dentista no existe');
-    
+
     const dentistaHorario = await this.horarioFechasRepository.find({
-      where: {dentista: dentista, disponible: false }
+      where: { dentista: dentista, disponible: false },
     });
-    if(!dentistaHorario) throw new NotFoundException('El dentista no tiene citas programdas');
-    
-    const citasPorDentista = await this.citasRepository.find({ 
-      where: {horarioFecha: dentistaHorario, estado: 'confirmada'},
-      order: {id: 'ASC'} 
+    if (!dentistaHorario)
+      throw new NotFoundException('El dentista no tiene citas programdas');
+
+    const citasPorDentista = await this.citasRepository.find({
+      where: { horarioFecha: dentistaHorario, estado: 'confirmada' },
+      order: { id: 'ASC' },
     });
-    if(!citasPorDentista) throw new NotFoundException('No tiene ninguna cita agendada en este momento');
-    
+    if (!citasPorDentista)
+      throw new NotFoundException(
+        'No tiene ninguna cita agendada en este momento',
+      );
+
     return citasPorDentista;
   }
 
   async findOne(id: number) {
-    return await this.citasRepository.findOneBy({id});
+    return await this.citasRepository.findOneBy({ id });
   }
 
   async update(id: number, updateCitaDto: UpdateCitaDto) {
-    const cita = await this.citasRepository.findOneBy({id});
+    const cita = await this.citasRepository.findOneBy({ id });
     if (!cita) throw new NotFoundException('Cita no encontrada');
 
     const horarioFechaAnterior = cita.horarioFecha;
 
     if (updateCitaDto.consultorio) cita.consultorio = updateCitaDto.consultorio;
     if (updateCitaDto.estado) cita.estado = updateCitaDto.estado;
-    if (updateCitaDto.observaciones) cita.observaciones = updateCitaDto.observaciones;
-    
+    if (updateCitaDto.observaciones)
+      cita.observaciones = updateCitaDto.observaciones;
+
     if (updateCitaDto.horarioFechaId) {
-      const nuevoHorarioFecha = await this.horarioFechasRepository.findOneBy({ 
-        id: updateCitaDto.horarioFechaId
+      const nuevoHorarioFecha = await this.horarioFechasRepository.findOneBy({
+        id: updateCitaDto.horarioFechaId,
       });
-      if (!nuevoHorarioFecha) throw new BadRequestException('HorarioFecha no encontrado');
-      
-      if (!nuevoHorarioFecha.disponible) throw new BadRequestException('El horario seleccionado ya se encuentra reservado');
+      if (!nuevoHorarioFecha)
+        throw new BadRequestException('HorarioFecha no encontrado');
+
+      if (!nuevoHorarioFecha.disponible)
+        throw new BadRequestException(
+          'El horario seleccionado ya se encuentra reservado',
+        );
 
       cita.horarioFecha = nuevoHorarioFecha;
 
@@ -110,7 +129,7 @@ export class CitasService {
         const ahora = new Date();
         const fechaHoraAnterior = this.combinarFechaYHora(
           horarioFechaAnterior.fecha,
-          horarioFechaAnterior.horario.horaFin
+          horarioFechaAnterior.horario.horaFin,
         );
 
         if (fechaHoraAnterior > ahora) {
@@ -119,20 +138,22 @@ export class CitasService {
         }
       }
     }
-    
+
     if (updateCitaDto.pacienteId) {
-      const paciente = await this.pacientesRepository.findOneBy({ id: updateCitaDto.pacienteId});
+      const paciente = await this.pacientesRepository.findOneBy({
+        id: updateCitaDto.pacienteId,
+      });
       if (!paciente) throw new BadRequestException('Paciente no encontrado');
       cita.paciente = paciente;
     }
-    
+
     const citaActualizada = await this.citasRepository.save(cita);
     await this.calendarService.actualizarCalendario(citaActualizada);
     return citaActualizada;
   }
 
   async remove(id: number) {
-    const cita = await this.citasRepository.findOneBy({id});
+    const cita = await this.citasRepository.findOneBy({ id });
 
     if (!cita) throw new NotFoundException('Cita no encontrada');
 
@@ -142,7 +163,7 @@ export class CitasService {
       const ahora = new Date();
       const fechaHoraFin = this.combinarFechaYHora(
         cita.horarioFecha.fecha,
-        cita.horarioFecha.horario.horaFin
+        cita.horarioFecha.horario.horaFin,
       );
 
       if (fechaHoraFin > ahora) {
@@ -163,10 +184,10 @@ export class CitasService {
    */
   private combinarFechaYHora(fecha: Date, hora: string): Date {
     const [horas, minutos, segundos] = hora.split(':').map(Number);
-    
+
     const fechaLocal = new Date(fecha);
     fechaLocal.setHours(horas, minutos, segundos, 0);
-    
+
     return fechaLocal;
   }
 }

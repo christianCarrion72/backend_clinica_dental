@@ -10,10 +10,10 @@ import { AuthModule } from 'src/auth/auth.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([HorarioFecha, Dentist, Horario]),
-    AuthModule
+    AuthModule,
   ],
   controllers: [HorarioFechasController],
   providers: [HorarioFechasService],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule],
 })
 export class HorarioFechasModule {}

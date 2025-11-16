@@ -7,10 +7,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { Paciente } from '../pacientes/entities/paciente.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Familiar, Paciente]),
-    AuthModule
-  ],
+  imports: [TypeOrmModule.forFeature([Familiar, Paciente]), AuthModule],
   controllers: [FamiliarsController],
   providers: [FamiliarsService],
 })

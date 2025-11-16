@@ -7,16 +7,15 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class HorariosService {
-
   constructor(
     @InjectRepository(Horario)
-    private readonly horariosRepository: Repository<Horario>
-  ){}
+    private readonly horariosRepository: Repository<Horario>,
+  ) {}
   async create(createHorarioDto: CreateHorarioDto) {
     const horarioData: Partial<Horario> = {
       horaInicio: createHorarioDto.horaInicio,
-      horaFin: createHorarioDto.horaFin
-    }
+      horaFin: createHorarioDto.horaFin,
+    };
     return await this.horariosRepository.save(horarioData);
   }
 
@@ -25,13 +24,14 @@ export class HorariosService {
   }
 
   async findOne(id: number) {
-    return await this.horariosRepository.findOneBy({id});
+    return await this.horariosRepository.findOneBy({ id });
   }
 
   async update(id: number, updateHorarioDto: UpdateHorarioDto) {
-    const horario = await this.horariosRepository.findOneBy({id});
+    const horario = await this.horariosRepository.findOneBy({ id });
     if (!horario) throw new NotFoundException('Horario no encontrado');
-    if (updateHorarioDto.horaInicio) horario.horaInicio = updateHorarioDto.horaInicio;
+    if (updateHorarioDto.horaInicio)
+      horario.horaInicio = updateHorarioDto.horaInicio;
     if (updateHorarioDto.horaFin) horario.horaFin = updateHorarioDto.horaFin;
     return await this.horariosRepository.save(horario);
   }

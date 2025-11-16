@@ -1,12 +1,12 @@
-import { Transform } from "class-transformer";
-import { IsEmail, IsString, MinLength } from "class-validator";
+import { Transform } from 'class-transformer';
+import { IsEmail, IsString, MinLength } from 'class-validator';
 
-export class RegisterDto{
-    @IsEmail()
-    correo: string;
+export class RegisterDto {
+  @IsEmail()
+  correo: string;
 
-    @Transform(({ value }) => value.trim())
-    @IsString()
-    @MinLength(6)
-    contraseña: string;
+  @Transform(({ value }) => value.trim())
+  @IsString()
+  @MinLength(6)
+  contraseña: string;
 }

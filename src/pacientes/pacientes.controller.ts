@@ -13,7 +13,13 @@ import {
 import { PacientesService } from './pacientes.service';
 import { CreatePacienteDto } from './dto/create-paciente.dto';
 import { UpdatePacienteDto } from './dto/update-paciente.dto';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { RolesGuard } from '../auth/guard/roles.guard';
 import { HasRoles } from '../auth/decorators/roles.decorator';
@@ -58,11 +64,12 @@ export class PacientesController {
     const pacientes = await this.pacientesService.search(query);
     return {
       success: true,
-      message: pacientes.length > 0 
-        ? 'Pacientes encontrados'
-        : 'No se encontraron pacientes',
+      message:
+        pacientes.length > 0
+          ? 'Pacientes encontrados'
+          : 'No se encontraron pacientes',
       data: pacientes,
-      total: pacientes.length
+      total: pacientes.length,
     };
   }
 

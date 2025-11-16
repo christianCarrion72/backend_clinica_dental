@@ -6,14 +6,9 @@ import { Horario } from './entities/horario.entity';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Horario
-    ]),
-    AuthModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Horario]), AuthModule],
   controllers: [HorariosController],
   providers: [HorariosService],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule],
 })
 export class HorariosModule {}

@@ -6,7 +6,6 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Google')
 @Controller('googleS')
 export class GoogleController {
-
   @Get('google')
   googleAuth(@Res() res: Response) {
     const oauth2Client = new google.auth.OAuth2(

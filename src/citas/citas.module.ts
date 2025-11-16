@@ -13,10 +13,10 @@ import { Dentist } from 'src/users/entities/dentist.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Cita, Paciente, HorarioFecha, Dentist]),
-    AuthModule
+    AuthModule,
   ],
   controllers: [CitasController, GoogleController],
   providers: [CitasService, CalendarService],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule],
 })
 export class CitasModule {}

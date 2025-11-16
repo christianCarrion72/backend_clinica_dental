@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from './user.entity';
 import { HorarioFecha } from 'src/horario_fechas/entities/horario_fecha.entity';
 
@@ -15,5 +22,5 @@ export class Dentist {
   usuario: User;
 
   @OneToMany(() => HorarioFecha, (horarioFecha) => horarioFecha.dentista)
-  horariosFecha: HorarioFecha[]
+  horariosFecha: HorarioFecha[];
 }

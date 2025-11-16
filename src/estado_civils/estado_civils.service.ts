@@ -12,7 +12,9 @@ export class EstadoCivilsService {
     private readonly estadoCivilRepository: Repository<EstadoCivil>,
   ) {}
 
-  async create(createEstadoCivilDto: CreateEstadoCivilDto): Promise<EstadoCivil> {
+  async create(
+    createEstadoCivilDto: CreateEstadoCivilDto,
+  ): Promise<EstadoCivil> {
     const estadoCivil = this.estadoCivilRepository.create(createEstadoCivilDto);
     return await this.estadoCivilRepository.save(estadoCivil);
   }
@@ -34,7 +36,10 @@ export class EstadoCivilsService {
     return estadoCivil;
   }
 
-  async update(id: number, updateEstadoCivilDto: UpdateEstadoCivilDto): Promise<EstadoCivil> {
+  async update(
+    id: number,
+    updateEstadoCivilDto: UpdateEstadoCivilDto,
+  ): Promise<EstadoCivil> {
     const estadoCivil = await this.findOne(id);
     this.estadoCivilRepository.merge(estadoCivil, updateEstadoCivilDto);
     return await this.estadoCivilRepository.save(estadoCivil);

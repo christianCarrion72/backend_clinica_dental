@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { CitasService } from './citas.service';
 import { CreateCitaDto } from './dto/create-cita.dto';
 import { UpdateCitaDto } from './dto/update-cita.dto';
@@ -29,7 +38,7 @@ export class CitasController {
   }
 
   @Get('dentista/:id')
-  async findForDentist(@Param('id_dentist') id: number){
+  async findForDentist(@Param('id_dentist') id: number) {
     return this.citasService.findForDentist(id);
   }
 

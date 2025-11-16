@@ -27,29 +27,29 @@ export class UsersService {
     const user = new User();
     Object.assign(user, {
       ...createUserDto,
-      contraseña: await bcryptjs.hash(createUserDto.contraseña, 10)
+      contraseña: await bcryptjs.hash(createUserDto.contraseña, 10),
     });
     return await this.userRepository.save(user);
   }
 
   async findOneByEmail(email: string) {
-    return await this.userRepository.findOne({ 
+    return await this.userRepository.findOne({
       where: { correo: email },
-      relations: ['rol']
+      relations: ['rol'],
     });
   }
 
   async findAll() {
     return await this.userRepository.find({
       relations: ['rol'],
-      withDeleted: false
+      withDeleted: false,
     });
   }
 
   async findOne(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['rol']
+      relations: ['rol'],
     });
 
     if (!user) {
@@ -63,7 +63,10 @@ export class UsersService {
     const user = await this.findOne(id);
 
     if (updateUserDto.contraseña) {
-      updateUserDto.contraseña = await bcryptjs.hash(updateUserDto.contraseña, 10);
+      updateUserDto.contraseña = await bcryptjs.hash(
+        updateUserDto.contraseña,
+        10,
+      );
     }
 
     Object.assign(user, updateUserDto);
@@ -77,7 +80,7 @@ export class UsersService {
 
   async createDentist(createUserDto: CreateUserDto) {
     const rolDentista = await this.roleRepository.findOne({
-      where: { nombre: Roles.DENTIST }
+      where: { nombre: Roles.DENTIST },
     });
 
     if (!rolDentista) {
@@ -88,14 +91,14 @@ export class UsersService {
     Object.assign(user, {
       ...createUserDto,
       contraseña: await bcryptjs.hash(createUserDto.contraseña, 10),
-      rol: rolDentista
+      rol: rolDentista,
     });
     const savedUser = await this.userRepository.save(user);
 
     const dentist = new Dentist();
     Object.assign(dentist, {
       usuario: savedUser,
-      especialidad: createUserDto.especialidad
+      especialidad: createUserDto.especialidad,
     });
     await this.dentistRepository.save(dentist);
 
@@ -105,15 +108,20 @@ export class UsersService {
   async updateDentist(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
     const dentist = await this.dentistRepository.findOne({
-      where: { usuario: { id } }
+      where: { usuario: { id } },
     });
 
     if (!dentist) {
-      throw new NotFoundException(`Dentista con ID de usuario ${id} no encontrado`);
+      throw new NotFoundException(
+        `Dentista con ID de usuario ${id} no encontrado`,
+      );
     }
 
     if (updateUserDto.contraseña) {
-      updateUserDto.contraseña = await bcryptjs.hash(updateUserDto.contraseña, 10);
+      updateUserDto.contraseña = await bcryptjs.hash(
+        updateUserDto.contraseña,
+        10,
+      );
     }
 
     // Actualizar usuario
@@ -131,7 +139,7 @@ export class UsersService {
 
   async createAdministrative(createUserDto: CreateUserDto) {
     const rolAdministrativo = await this.roleRepository.findOne({
-      where: { nombre: Roles.ADMINISTRATIVE }
+      where: { nombre: Roles.ADMINISTRATIVE },
     });
 
     if (!rolAdministrativo) {
@@ -142,7 +150,7 @@ export class UsersService {
     Object.assign(user, {
       ...createUserDto,
       contraseña: await bcryptjs.hash(createUserDto.contraseña, 10),
-      rol: rolAdministrativo
+      rol: rolAdministrativo,
     });
     const savedUser = await this.userRepository.save(user);
 
@@ -150,7 +158,7 @@ export class UsersService {
     Object.assign(administrative, {
       usuario: savedUser,
       area: createUserDto.area,
-      cargo: createUserDto.cargo
+      cargo: createUserDto.cargo,
     });
     await this.administrativeRepository.save(administrative);
 
@@ -160,15 +168,20 @@ export class UsersService {
   async updateAdministrative(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
     const administrative = await this.administrativeRepository.findOne({
-      where: { usuario: { id } }
+      where: { usuario: { id } },
     });
 
     if (!administrative) {
-      throw new NotFoundException(`Administrativo con ID de usuario ${id} no encontrado`);
+      throw new NotFoundException(
+        `Administrativo con ID de usuario ${id} no encontrado`,
+      );
     }
 
     if (updateUserDto.contraseña) {
-      updateUserDto.contraseña = await bcryptjs.hash(updateUserDto.contraseña, 10);
+      updateUserDto.contraseña = await bcryptjs.hash(
+        updateUserDto.contraseña,
+        10,
+      );
     }
 
     // Actualizar usuario
@@ -179,7 +192,7 @@ export class UsersService {
     if (updateUserDto.area || updateUserDto.cargo) {
       Object.assign(administrative, {
         area: updateUserDto.area,
-        cargo: updateUserDto.cargo
+        cargo: updateUserDto.cargo,
       });
       await this.administrativeRepository.save(administrative);
     }
@@ -189,12 +202,12 @@ export class UsersService {
 
   async dentistUserId(id: number): Promise<number> {
     const dentistId = await this.dentistRepository.findOne({
-      where: {usuario: {id: id}},
-      relations: ['usuario']
+      where: { usuario: { id: id } },
+      relations: ['usuario'],
     });
-    if(!dentistId) throw new NotFoundException('El usuario no es dentista');
+    if (!dentistId) throw new NotFoundException('El usuario no es dentista');
     //console.log(dentistId.id);
-    
+
     return dentistId.id;
   }
 }

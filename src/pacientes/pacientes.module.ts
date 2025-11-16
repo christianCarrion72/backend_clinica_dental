@@ -7,12 +7,9 @@ import { AuthModule } from 'src/auth/auth.module';
 import { EstadoCivil } from 'src/estado_civils/entities/estado_civil.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Paciente, EstadoCivil]),
-    AuthModule
-  ],
+  imports: [TypeOrmModule.forFeature([Paciente, EstadoCivil]), AuthModule],
   controllers: [PacientesController],
   providers: [PacientesService],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule],
 })
 export class PacientesModule {}

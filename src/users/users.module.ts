@@ -11,11 +11,17 @@ import { HorarioFecha } from 'src/horario_fechas/entities/horario_fecha.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Role, Dentist, Administrative, HorarioFecha]),
-    AuthModule
+    TypeOrmModule.forFeature([
+      User,
+      Role,
+      Dentist,
+      Administrative,
+      HorarioFecha,
+    ]),
+    AuthModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService]
+  exports: [UsersService],
 })
 export class UsersModule {}

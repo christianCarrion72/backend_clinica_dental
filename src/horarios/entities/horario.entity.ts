@@ -20,7 +20,7 @@ export class Horario {
   horaFin: string;
 
   @OneToMany(() => HorarioFecha, (horarioFecha) => horarioFecha.horario)
-  horariosFecha: HorarioFecha[]
+  horariosFecha: HorarioFecha[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -3,12 +3,12 @@ import { Paciente } from '../../pacientes/entities/paciente.entity';
 
 @Entity('estado_civil')
 export class EstadoCivil {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ length: 50 })
-    descripcion: string;
+  @Column({ length: 50 })
+  descripcion: string;
 
-    @OneToMany(() => Paciente, (paciente) => paciente.estadoCivil)
-    pacientes: Paciente[];
+  @OneToMany(() => Paciente, (paciente) => paciente.estadoCivil)
+  pacientes: Paciente[];
 }

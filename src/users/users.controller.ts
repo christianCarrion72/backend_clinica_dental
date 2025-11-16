@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -65,7 +75,7 @@ export class UsersController {
 
   @Get('dentistUser/:id')
   @HasRoles(Roles.DENTIST, Roles.ADMIN)
-  async userDentisId(@Param('id', ParseIntPipe)id: number) {
+  async userDentisId(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.dentistUserId(id);
   }
 }
