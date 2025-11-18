@@ -10,6 +10,13 @@ import { HorariosModule } from './horarios/horarios.module';
 import { CitasModule } from './citas/citas.module';
 import { HorarioFechasModule } from './horario_fechas/horario_fechas.module';
 import { SeederModule } from './database/seeders/seeder.module';
+import { HistoriaClinicasModule } from './historia-clinicas/historia-clinicas.module';
+import { HistorialMedicosModule } from './historial-medicos/historial-medicos.module';
+import { ExamenBucalsModule } from './examen-bucals/examen-bucals.module';
+import { EnfermedadsModule } from './enfermedads/enfermedads.module';
+import { EmbarazosModule } from './embarazos/embarazos.module';
+import { PlanTratamientosModule } from './plan-tratamientos/plan-tratamientos.module';
+import { ProcedimientosModule } from './procedimientos/procedimientos.module';
 
 @Module({
   imports: [
@@ -42,6 +49,13 @@ import { SeederModule } from './database/seeders/seeder.module';
     CitasModule,
     HorarioFechasModule,
     SeederModule,
+    HistoriaClinicasModule,
+    HistorialMedicosModule,
+    ExamenBucalsModule,
+    EnfermedadsModule,
+    EmbarazosModule,
+    PlanTratamientosModule,
+    ProcedimientosModule,
   ],
   controllers: [],
   providers: [],
