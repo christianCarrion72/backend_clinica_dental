@@ -23,8 +23,8 @@ export class Cita {
   @Column()
   observaciones: string;
 
-  @Column({ length: 255, nullable: true })
-  externalEventId?: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  externalEventId?: string | null;
 
   @ManyToOne(() => Paciente, (paciente) => paciente.citas, {
     nullable: false,

@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Cita } from '../entities/cita.entity';
-import { google } from 'googleapis';
-import { OAuth2Client } from 'google-auth-library';
+import { google, calendar_v3 } from 'googleapis';
+type OAuth2ClientType = InstanceType<typeof google.auth.OAuth2>;
 
 @Injectable()
 export class CalendarService {
   private readonly logger = new Logger(CalendarService.name);
-  private oauth2Client: OAuth2Client;
-  private calendar: any;
+  private oauth2Client: OAuth2ClientType;
+  private calendar: calendar_v3.Calendar;
 
   constructor() {
     this.initializeGoogleCalendar();
@@ -25,7 +25,11 @@ export class CalendarService {
       );
     }
 
-    this.oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUrl);
+    this.oauth2Client = new google.auth.OAuth2(
+      clientId,
+      clientSecret,
+      redirectUrl,
+    );
 
     this.calendar = google.calendar({
       version: 'v3',
@@ -47,8 +51,15 @@ export class CalendarService {
     });
 
     try {
-      const { credentials } = await this.oauth2Client.refreshAccessToken();
-      return credentials.access_token!;
+      const tokenResponse = await this.oauth2Client.getAccessToken();
+      const accessToken =
+        typeof tokenResponse === 'string'
+          ? tokenResponse
+          : tokenResponse?.token;
+      if (!accessToken) {
+        throw new BadRequestException('No se pudo obtener el token de acceso');
+      }
+      return accessToken;
     } catch (error) {
       this.logger.error('Error al refrescar el token de Google', error);
       throw new BadRequestException('Error al autenticar con Google Calendar');
@@ -60,6 +71,9 @@ export class CalendarService {
       await this.getAccessToken();
 
       const calendarId = process.env.GOOGLE_CALENDAR_ID;
+      if (!calendarId) {
+        throw new BadRequestException('ID de calendario no configurado');
+      }
 
       const fechaStr =
         cita.horarioFecha.fecha instanceof Date
@@ -77,7 +91,7 @@ export class CalendarService {
         ? [{ email: cita.paciente.email }]
         : [];
 
-      const event = {
+      const event: calendar_v3.Schema$Event = {
         summary: `Cita - ${cita.paciente.nombre}`,
         description: `Paciente: ${cita.paciente.nombre}\nConsultorio: ${cita.consultorio}\nObservaciones: ${cita.observaciones}`,
         start: {
@@ -92,11 +106,11 @@ export class CalendarService {
       };
 
       const response = await this.calendar.events.insert({
-        calendarId: calendarId,
-        resource: event,
+        calendarId,
+        requestBody: event,
       });
 
-      cita.externalEventId = response.data.id;
+      cita.externalEventId = response.data.id ?? null;
       this.logger.log(
         `Cita agregada a Google Calendar con ID: ${response.data.id}`,
       );
@@ -110,7 +124,8 @@ export class CalendarService {
 
   async actualizarCalendario(cita: Cita) {
     try {
-      if (!cita.externalEventId) {
+      const eventId = cita.externalEventId;
+      if (!eventId) {
         this.logger.warn(`Cita ${cita.id} no tiene externalEventId`);
         return;
       }
@@ -118,6 +133,9 @@ export class CalendarService {
       await this.getAccessToken();
 
       const calendarId = process.env.GOOGLE_CALENDAR_ID;
+      if (!calendarId) {
+        throw new BadRequestException('ID de calendario no configurado');
+      }
 
       const fechaStr =
         cita.horarioFecha.fecha instanceof Date
@@ -135,7 +153,7 @@ export class CalendarService {
         ? [{ email: cita.paciente.email }]
         : [];
 
-      const event = {
+      const event: calendar_v3.Schema$Event = {
         summary: `Cita - ${cita.paciente.nombre}`,
         description: `Paciente: ${cita.paciente.nombre}\nConsultorio: ${cita.consultorio}\nObservaciones: ${cita.observaciones}`,
         start: {
@@ -150,9 +168,9 @@ export class CalendarService {
       };
 
       const response = await this.calendar.events.update({
-        calendarId: calendarId,
-        eventId: cita.externalEventId,
-        resource: event,
+        calendarId,
+        eventId,
+        requestBody: event,
       });
 
       this.logger.log(
@@ -169,7 +187,8 @@ export class CalendarService {
 
   async eliminarDeCalendario(cita: Cita) {
     try {
-      if (!cita.externalEventId) {
+      const eventId = cita.externalEventId;
+      if (!eventId) {
         this.logger.warn(`Cita ${cita.id} no tiene externalEventId`);
         return;
       }
@@ -177,10 +196,13 @@ export class CalendarService {
       await this.getAccessToken();
 
       const calendarId = process.env.GOOGLE_CALENDAR_ID;
+      if (!calendarId) {
+        throw new BadRequestException('ID de calendario no configurado');
+      }
 
       await this.calendar.events.delete({
-        calendarId: calendarId,
-        eventId: cita.externalEventId,
+        calendarId,
+        eventId,
       });
 
       this.logger.log(

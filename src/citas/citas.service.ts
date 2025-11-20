@@ -7,7 +7,7 @@ import { CreateCitaDto } from './dto/create-cita.dto';
 import { UpdateCitaDto } from './dto/update-cita.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cita } from './entities/cita.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Paciente } from 'src/pacientes/entities/paciente.entity';
 import { HorarioFecha } from 'src/horario_fechas/entities/horario_fecha.entity';
 import { CalendarService } from './services/calendar.service';
@@ -78,14 +78,16 @@ export class CitasService {
     const dentistaHorario = await this.horarioFechasRepository.find({
       where: { dentista: dentista, disponible: false },
     });
-    if (!dentistaHorario)
+    if (dentistaHorario.length === 0)
       throw new NotFoundException('El dentista no tiene citas programdas');
 
+    const horarioIds = dentistaHorario.map((hf) => hf.id);
+
     const citasPorDentista = await this.citasRepository.find({
-      where: { horarioFecha: dentistaHorario, estado: 'confirmada' },
+      where: { horarioFecha: In(horarioIds), estado: 'confirmada' },
       order: { id: 'ASC' },
     });
-    if (!citasPorDentista)
+    if (citasPorDentista.length === 0)
       throw new NotFoundException(
         'No tiene ninguna cita agendada en este momento',
       );
