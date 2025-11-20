@@ -1,8 +1,13 @@
+import { HistoriaClinica } from 'src/historia-clinicas/entities/historia-clinica.entity';
+import { Procedimiento } from 'src/procedimientos/entities/procedimiento.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -25,7 +30,21 @@ export class PlanTratamiento {
   pieza: string;
 
   @Column({ nullable: true })
-  precio: string;
+  precio: number;
+
+  @ManyToOne(
+    () => HistoriaClinica,
+    (historiaClinica) => historiaClinica.planTratamientos,
+    { nullable: false },
+  )
+  @JoinColumn({ name: 'historiaClinicaId' })
+  historiaClinica: HistoriaClinica;
+
+  @OneToMany(
+    () => Procedimiento,
+    (procedimiento) => procedimiento.planTratamiento,
+  )
+  procedimientos: Procedimiento[];
 
   @CreateDateColumn()
   createdAt: Date;

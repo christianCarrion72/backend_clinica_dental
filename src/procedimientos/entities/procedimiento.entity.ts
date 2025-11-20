@@ -1,8 +1,11 @@
+import { PlanTratamiento } from 'src/plan-tratamientos/entities/plan-tratamiento.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,6 +23,13 @@ export class Procedimiento {
 
   @Column({ nullable: true })
   trabajoRealizado: string;
+
+  @ManyToOne(
+    () => PlanTratamiento,
+    (planTratamiento) => planTratamiento.procedimientos,
+  )
+  @JoinColumn({ name: 'planTratamientoId' })
+  planTratamiento: PlanTratamiento;
 
   @CreateDateColumn()
   createdAt: Date;

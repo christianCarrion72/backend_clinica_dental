@@ -1,8 +1,11 @@
+import { HistoriaClinica } from 'src/historia-clinicas/entities/historia-clinica.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -41,6 +44,13 @@ export class ExamenBucal {
 
   @Column({ nullable: true })
   pisoBoca: string;
+
+  @OneToOne(
+    () => HistoriaClinica,
+    (historiaClinica) => historiaClinica.examenBucal,
+  )
+  @JoinColumn({ name: 'historiaClinicaId' })
+  historiaClinica: HistoriaClinica;
 
   @CreateDateColumn()
   createdAt: Date;

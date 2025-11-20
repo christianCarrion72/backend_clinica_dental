@@ -5,12 +5,14 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { EstadoCivil } from '../../estado_civils/entities/estado_civil.entity';
 import { Familiar } from '../../familiars/entities/familiar.entity';
 import { Cita } from 'src/citas/entities/cita.entity';
+import { HistoriaClinica } from 'src/historia-clinicas/entities/historia-clinica.entity';
 
 @Entity('pacientes')
 export class Paciente {
@@ -43,6 +45,12 @@ export class Paciente {
 
   @Column({ length: 20 })
   celular: string;
+
+  @OneToOne(
+    () => HistoriaClinica,
+    (historiaClinica) => historiaClinica.paciente,
+  )
+  historiaClinica: HistoriaClinica;
 
   @OneToMany(() => Familiar, (familiar) => familiar.paciente)
   familiares: Familiar[];
