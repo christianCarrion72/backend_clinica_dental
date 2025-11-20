@@ -9,7 +9,7 @@ import { EstadoCivilsModule } from './estado_civils/estado_civils.module';
 import { HorariosModule } from './horarios/horarios.module';
 import { CitasModule } from './citas/citas.module';
 import { HorarioFechasModule } from './horario_fechas/horario_fechas.module';
-import { SeederModule } from './database/seeders/seeder.module';
+
 import { HistoriaClinicasModule } from './historia-clinicas/historia-clinicas.module';
 import { HistorialMedicosModule } from './historial-medicos/historial-medicos.module';
 import { ExamenBucalsModule } from './examen-bucals/examen-bucals.module';
@@ -48,7 +48,7 @@ import { ProcedimientosModule } from './procedimientos/procedimientos.module';
     HorariosModule,
     CitasModule,
     HorarioFechasModule,
-    SeederModule,
+
     HistoriaClinicasModule,
     HistorialMedicosModule,
     ExamenBucalsModule,

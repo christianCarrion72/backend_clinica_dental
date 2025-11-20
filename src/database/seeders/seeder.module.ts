@@ -12,6 +12,13 @@ import { Cita } from 'src/citas/entities/cita.entity';
 import { EstadoCivil } from 'src/estado_civils/entities/estado_civil.entity';
 import { Familiar } from 'src/familiars/entities/familiar.entity';
 import { Administrative } from 'src/users/entities/administrative.entity';
+import { HistoriaClinica } from 'src/historia-clinicas/entities/historia-clinica.entity';
+import { HistorialMedico } from 'src/historial-medicos/entities/historial-medico.entity';
+import { PlanTratamiento } from 'src/plan-tratamientos/entities/plan-tratamiento.entity';
+import { Enfermedad } from 'src/enfermedads/entities/enfermedad.entity';
+import { Procedimiento } from 'src/procedimientos/entities/procedimiento.entity';
+import { Embarazo } from 'src/embarazos/entities/embarazo.entity';
+import { ExamenBucal } from 'src/examen-bucals/entities/examen-bucal.entity';
 
 @Module({
   imports: [
@@ -46,6 +53,13 @@ import { Administrative } from 'src/users/entities/administrative.entity';
       EstadoCivil,
       Familiar,
       Administrative,
+      HistoriaClinica,
+      HistorialMedico,
+      PlanTratamiento,
+      Enfermedad,
+      Procedimiento,
+      Embarazo,
+      ExamenBucal,
     ]),
   ],
   providers: [InitialSeeder],
