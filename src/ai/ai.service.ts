@@ -164,20 +164,24 @@ REGLAS IMPORTANTES:
 2. VALORES POR DEFECTO cuando no se especifique:
    - estado: "Completado" (usar solo si el usuario menciona explícitamente otro estado)
    - precio: 0 (usar solo si el usuario menciona un precio específico)
+   - pieza: "Todas las piezas" (usar solo si el usuario menciona una pieza específica)
    - proximaCita: "${nextWeekDate}" (una semana después de hoy ${today})
 3. Los estados válidos son: "Pendiente", "En Proceso", "Completado"
 4. planIndex debe corresponder al índice del plan de tratamiento (0, 1, 2...)
 5. Si el usuario NO menciona fecha de próxima cita, usa "${nextWeekDate}"
 6. Si el usuario NO menciona precio, usa 0
 7. Si el usuario NO menciona estado, usa "Completado"
-8. IMPORTANTE: Si solo se menciona un diagnóstico SIN procedimientos específicos realizados, deja el array "procedimientos" vacío: []
-9. Solo incluye procedimientos si se mencionan trabajos específicos realizados o planificados
-10. Extrae toda la información dental mencionada, no solo lo explícito
+8. Si el usuario NO menciona pieza dental específica, usa "Todas las piezas"
+9. IMPORTANTE: Si solo se menciona un diagnóstico SIN procedimientos específicos realizados, deja el array "procedimientos" vacío: []
+10. Solo incluye procedimientos si se mencionan trabajos específicos realizados o planificados
+11. Extrae toda la información dental mencionada, no solo lo explícito
 
 EJEMPLOS:
 - Si solo dice "Caries en pieza 16" → procedimientos: []
-- Si dice "Se realizó limpieza dental" → incluir en procedimientos
-- Si dice "Diagnóstico: gingivitis" → procedimientos: []
+- Si dice "Se realizó limpieza dental" → incluir en procedimientos, pieza: "Todas las piezas"
+- Si dice "Diagnóstico: gingivitis" → procedimientos: [], pieza: "Todas las piezas"
+- Si dice "Problema en molar superior" → pieza: "Molar superior"
+- Si dice "Extracción de la pieza 30" → pieza: "Pieza 30"
 - Si dice "Se hizo extracción y se programó cita" → incluir en procedimientos
 
 Respuesta:`;
