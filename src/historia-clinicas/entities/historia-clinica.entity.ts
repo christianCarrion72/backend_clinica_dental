@@ -1,4 +1,3 @@
-import { ExamenBucal } from 'src/examen-bucals/entities/examen-bucal.entity';
 import { HistorialMedico } from 'src/historial-medicos/entities/historial-medico.entity';
 import { Paciente } from 'src/pacientes/entities/paciente.entity';
 import { PlanTratamiento } from 'src/plan-tratamientos/entities/plan-tratamiento.entity';
@@ -54,8 +53,8 @@ export class HistoriaClinica {
   })
   dentistas: Dentist[];
 
-  @OneToOne(() => ExamenBucal, (examenBucal) => examenBucal.historiaClinica)
-  examenBucal: ExamenBucal;
+  @Column('simple-array', { nullable: true })
+  examenBucal: string[];
 
   @CreateDateColumn()
   createdAt: Date;

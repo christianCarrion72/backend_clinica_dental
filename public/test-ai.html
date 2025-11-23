@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test Audio AI</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .upload-area {
+        border: 2px dashed #ccc;
+        padding: 20px;
+        text-align: center;
+        margin: 20px 0;
+      }
+      .result {
+        background: #f5f5f5;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      .error {
+        background: #ffebee;
+        color: #c62828;
+      }
+      .success {
+        background: #e8f5e8;
+        color: #2e7d32;
+      }
+      .loading {
+        background: #fff3e0;
+        color: #ef6c00;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Test de Análisis de Audio Dental</h1>
+
+    <div class="upload-area">
+      <input type="file" id="audioFile" accept="audio/*" />
+      <br /><br />
+      <button onclick="uploadAudio()">Analizar Audio</button>
+      <br /><br />
+      <button onclick="testConnection()">Test Conexión OpenAI</button>
+    </div>
+
+    <div id="result"></div>
+
+    <h2>Formatos Soportados:</h2>
+    <ul>
+      <li>MP3 (.mp3)</li>
+      <li>WAV (.wav)</li>
+      <li>M4A (.m4a)</li>
+      <li>WebM (.webm)</li>
+      <li>OGG (.ogg)</li>
+    </ul>
+
+    <script>
+      async function testConnection() {
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML =
+          '<div class="result loading">Probando conexión con OpenAI...</div>';
+
+        try {
+          const response = await fetch('/ai/test-connection', {
+            method: 'POST',
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            resultDiv.innerHTML = `<div class="result success">✅ ${result.message}<br>Modelo: ${result.model}</div>`;
+          } else {
+            resultDiv.innerHTML = `<div class="result error">❌ Error: ${result.message}</div>`;
+          }
+        } catch (error) {
+          resultDiv.innerHTML = `<div class="result error">❌ Error de conexión: ${error.message}</div>`;
+        }
+      }
+
+      async function uploadAudio() {
+        const fileInput = document.getElementById('audioFile');
+        const resultDiv = document.getElementById('result');
+
+        if (!fileInput.files[0]) {
+          alert('Por favor selecciona un archivo de audio');
+          return;
+        }
+
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('audio', file);
+
+        resultDiv.innerHTML =
+          '<div class="result loading">🎵 Transcribiendo y analizando audio...</div>';
+
+        try {
+          const response = await fetch('/ai/analyze-audio', {
+            method: 'POST',
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (result.success === false) {
+            resultDiv.innerHTML = `
+                        <div class="result error">
+                            ❌ <strong>Error:</strong> ${result.message}<br>
+                            <small>Código: ${result.error}</small>
+                        </div>`;
+          } else {
+            const html = `
+                        <div class="result success">
+                            <h3>✅ Análisis Completado</h3>
+                            
+                            <h4>Planes de Tratamiento:</h4>
+                            ${result.planesTratamiento
+                              .map(
+                                (plan, index) => `
+                                <div style="margin: 10px 0; padding: 10px; border-left: 3px solid #4caf50;">
+                                    <strong>Plan ${index + 1}:</strong> ${plan.diagnosticoTratamiento}<br>
+                                    <strong>Estado:</strong> ${plan.estado}<br>
+                                    <strong>Pieza:</strong> ${plan.pieza}<br>
+                                    <strong>Precio:</strong> $${plan.precio}
+                                </div>
+                            `,
+                              )
+                              .join('')}
+                            
+                            <h4>Procedimientos:</h4>
+                            ${result.procedimientos
+                              .map(
+                                (proc, index) => `
+                                <div style="margin: 10px 0; padding: 10px; border-left: 3px solid #2196f3;">
+                                    <strong>Procedimiento ${index + 1}:</strong> ${proc.trabajoRealizado}<br>
+                                    ${proc.proximaCita ? `<strong>Próxima Cita:</strong> ${proc.proximaCita}<br>` : ''}
+                                    <strong>Plan Relacionado:</strong> ${proc.planIndex + 1}
+                                </div>
+                            `,
+                              )
+                              .join('')}
+                            
+                            <h4>JSON Completo:</h4>
+                            <pre style="background: #f0f0f0; padding: 10px; overflow-x: auto;">
+${JSON.stringify(result, null, 2)}
+                            </pre>
+                        </div>
+                    `;
+            resultDiv.innerHTML = html;
+          }
+        } catch (error) {
+          resultDiv.innerHTML = `<div class="result error">❌ Error: ${error.message}</div>`;
+        }
+      }
+    </script>
+  </body>
+</html>

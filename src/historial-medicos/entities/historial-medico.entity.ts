@@ -1,5 +1,3 @@
-import { Embarazo } from 'src/embarazos/entities/embarazo.entity';
-import { Enfermedad } from 'src/enfermedads/entities/enfermedad.entity';
 import { HistoriaClinica } from 'src/historia-clinicas/entities/historia-clinica.entity';
 import {
   Column,
@@ -7,7 +5,6 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -46,11 +43,8 @@ export class HistorialMedico {
   @JoinColumn({ name: 'historiaClinicaId' })
   historiaClinica: HistoriaClinica;
 
-  @ManyToMany(() => Enfermedad, (enfermedad) => enfermedad.historialesMedicos)
-  enfermedades: Enfermedad[];
-
-  @OneToOne(() => Embarazo, (embarazo) => embarazo.historialMedico)
-  embarazo: Embarazo;
+  @Column('simple-array', { nullable: true })
+  enfermedades: string[];
 
   @CreateDateColumn()
   createdAt: Date;

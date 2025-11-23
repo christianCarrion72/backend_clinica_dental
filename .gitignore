@@ -15,6 +15,9 @@ lerna-debug.log*
 # OS
 .DS_Store
 
+# Temporary files
+/tmp
+
 # Tests
 /coverage
 /.nyc_output

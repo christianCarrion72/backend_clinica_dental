@@ -1,11 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsNumber,
+  IsString,
+  IsBoolean,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateHistoriaClinicaDto {
   @ApiProperty({
     description: 'Fecha de ingreso',
-    example: '2023-01-01',
+    example: '2024-01-15',
   })
   @IsDate()
   @Type(() => Date)
@@ -13,17 +19,10 @@ export class CreateHistoriaClinicaDto {
 
   @ApiProperty({
     description: 'Motivo de la consulta',
-    example: 'Consulta de seguimiento',
+    example: 'Revisión dental general y limpieza',
   })
   @IsString()
   motivoConsulta: string;
-
-  @ApiProperty({
-    description: 'ID del historial médico',
-    example: 1,
-  })
-  @IsNumber()
-  historialMedicoId: number;
 
   @ApiProperty({
     description: 'ID del paciente',
@@ -38,4 +37,19 @@ export class CreateHistoriaClinicaDto {
   })
   @IsNumber({}, { each: true })
   dentistas: number[];
+
+  // Campos opcionales para el historial médico que se creará automáticamente
+
+  @ApiProperty({
+    description: 'Datos del examen bucal',
+    example: [
+      'Dientes en buen estado',
+      'Encías saludables',
+      'Higiene bucal regular',
+    ],
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ each: true })
+  examenBucal?: string[] = [];
 }

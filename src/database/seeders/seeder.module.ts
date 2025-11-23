@@ -17,8 +17,6 @@ import { HistorialMedico } from 'src/historial-medicos/entities/historial-medico
 import { PlanTratamiento } from 'src/plan-tratamientos/entities/plan-tratamiento.entity';
 import { Enfermedad } from 'src/enfermedads/entities/enfermedad.entity';
 import { Procedimiento } from 'src/procedimientos/entities/procedimiento.entity';
-import { Embarazo } from 'src/embarazos/entities/embarazo.entity';
-import { ExamenBucal } from 'src/examen-bucals/entities/examen-bucal.entity';
 
 @Module({
   imports: [
@@ -58,8 +56,6 @@ import { ExamenBucal } from 'src/examen-bucals/entities/examen-bucal.entity';
       PlanTratamiento,
       Enfermedad,
       Procedimiento,
-      Embarazo,
-      ExamenBucal,
     ]),
   ],
   providers: [InitialSeeder],

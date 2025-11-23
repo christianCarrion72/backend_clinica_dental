@@ -37,6 +37,15 @@ export class ProcedimientosController {
     return await this.procedimientosService.findOne(id);
   }
 
+  @Get('plan-tratamiento/:planTratamientoId')
+  async findByPlanTratamientoId(
+    @Param('planTratamientoId') planTratamientoId: string,
+  ) {
+    return await this.procedimientosService.findByPlanTratamientoId(
+      +planTratamientoId,
+    );
+  }
+
   @Patch(':id')
   async update(
     @Param('id') id: number,

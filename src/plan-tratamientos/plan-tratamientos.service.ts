@@ -48,6 +48,21 @@ export class PlanTratamientosService {
     return planTratamiento;
   }
 
+  async findByHistorialMedicoId(
+    historialMedicoId: number,
+  ): Promise<PlanTratamiento[]> {
+    const planesTratamiento = await this.planTratamientoRepository.find({
+      where: {
+        historiaClinica: {
+          historialMedico: { id: historialMedicoId },
+        },
+      },
+      relations: ['historiaClinica', 'procedimientos'],
+    });
+
+    return planesTratamiento;
+  }
+
   async update(id: number, updatePlanTratamientoDto: UpdatePlanTratamientoDto) {
     const planTratamiento = await this.planTratamientoRepository.findOne({
       where: { id },

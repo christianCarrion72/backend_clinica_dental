@@ -29,8 +29,8 @@ export class PacientesService {
       telefono: createPacienteDto.telefono,
       celular: createPacienteDto.celular,
     };
-    const existeCorreo = await this.pacienteRepository.findBy({
-      email: createPacienteDto.email,
+    const existeCorreo = await this.pacienteRepository.findOne({
+      where: { email: createPacienteDto.email },
     });
     if (existeCorreo)
       throw new BadRequestException('El correo ya esta registrado');
@@ -80,10 +80,10 @@ export class PacientesService {
     if (updatePacienteDto.telefono)
       paciente.telefono = updatePacienteDto.telefono;
     if (updatePacienteDto.email) {
-      const existeCorreo = await this.pacienteRepository.findBy({
-        email: updatePacienteDto.email,
+      const existeCorreo = await this.pacienteRepository.findOne({
+        where: { email: updatePacienteDto.email },
       });
-      if (existeCorreo)
+      if (existeCorreo && existeCorreo.id !== id)
         throw new BadRequestException('El correo ya esta registrado');
       paciente.email = updatePacienteDto.email;
     }

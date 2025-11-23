@@ -12,11 +12,10 @@ import { HorarioFechasModule } from './horario_fechas/horario_fechas.module';
 
 import { HistoriaClinicasModule } from './historia-clinicas/historia-clinicas.module';
 import { HistorialMedicosModule } from './historial-medicos/historial-medicos.module';
-import { ExamenBucalsModule } from './examen-bucals/examen-bucals.module';
 import { EnfermedadsModule } from './enfermedads/enfermedads.module';
-import { EmbarazosModule } from './embarazos/embarazos.module';
 import { PlanTratamientosModule } from './plan-tratamientos/plan-tratamientos.module';
 import { ProcedimientosModule } from './procedimientos/procedimientos.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -51,11 +50,10 @@ import { ProcedimientosModule } from './procedimientos/procedimientos.module';
 
     HistoriaClinicasModule,
     HistorialMedicosModule,
-    ExamenBucalsModule,
     EnfermedadsModule,
-    EmbarazosModule,
     PlanTratamientosModule,
     ProcedimientosModule,
+    AiModule,
   ],
   controllers: [],
   providers: [],

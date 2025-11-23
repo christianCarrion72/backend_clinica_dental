@@ -39,6 +39,15 @@ export class PlanTratamientosController {
     return await this.planTratamientosService.findOne(id);
   }
 
+  @Get('historial-medico/:historialMedicoId')
+  async findByHistorialMedicoId(
+    @Param('historialMedicoId') historialMedicoId: string,
+  ) {
+    return await this.planTratamientosService.findByHistorialMedicoId(
+      +historialMedicoId,
+    );
+  }
+
   @Patch(':id')
   async update(
     @Param('id') id: number,

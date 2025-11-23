@@ -54,6 +54,17 @@ export class ProcedimientosService {
     return procedimiento;
   }
 
+  async findByPlanTratamientoId(
+    planTratamientoId: number,
+  ): Promise<Procedimiento[]> {
+    const procedimientos = await this.procedimientoRepository.find({
+      where: { planTratamiento: { id: planTratamientoId } },
+      relations: ['planTratamiento'],
+    });
+
+    return procedimientos;
+  }
+
   async update(
     id: number,
     updateProcedimientoDto: UpdateProcedimientoDto,

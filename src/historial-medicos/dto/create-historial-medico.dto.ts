@@ -72,11 +72,11 @@ export class CreateHistorialMedicoDto {
   historiaClinicaId: number;
 
   @ApiProperty({
-    description: 'IDs de las enfermedades',
-    example: [1, 2, 3],
+    description: 'Lista de enfermedades',
+    example: ['Diabetes', 'Hipertensión'],
   })
   @IsArray()
-  @Type(() => Number)
-  @IsNumber({}, { each: true })
-  enfermedades: number[];
+  @IsString({ each: true })
+  @IsOptional()
+  enfermedades?: string[];
 }

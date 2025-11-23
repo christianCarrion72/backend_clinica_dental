@@ -30,38 +30,43 @@ export class HistorialMedicosService {
       tratamientoActivo: createHistorialMedicoDto.tratamientoActivo,
       ultimaConsulta: createHistorialMedicoDto.ultimaConsulta,
       historiaClinica,
+      enfermedades: createHistorialMedicoDto.enfermedades || [],
     });
-    const saved = await this.historialMedicoRepositoty.save(historial);
-    if (
-      createHistorialMedicoDto.enfermedades &&
-      createHistorialMedicoDto.enfermedades.length
-    ) {
-      await this.historialMedicoRepositoty
-        .createQueryBuilder()
-        .relation(HistorialMedico, 'enfermedades')
-        .of(saved.id)
-        .add(createHistorialMedicoDto.enfermedades);
-    }
-    return saved;
+    return await this.historialMedicoRepositoty.save(historial);
   }
 
   async findAll() {
     return await this.historialMedicoRepositoty.find({
-      relations: ['enfermedades', 'historiaClinica'],
+      relations: ['historiaClinica'],
     });
   }
 
   async findOne(id: number) {
     return await this.historialMedicoRepositoty.findOne({
       where: { id },
-      relations: ['enfermedades', 'historiaClinica'],
+      relations: ['historiaClinica'],
     });
+  }
+
+  async findByHistoriaClinicaId(historiaClinicaId: number) {
+    const historialMedico = await this.historialMedicoRepositoty.findOne({
+      where: { historiaClinica: { id: historiaClinicaId } },
+      relations: ['historiaClinica'],
+    });
+
+    if (!historialMedico) {
+      throw new NotFoundException(
+        'False',
+      );
+    }
+
+    return historialMedico;
   }
 
   async update(id: number, updateHistorialMedicoDto: UpdateHistorialMedicoDto) {
     const historial = await this.historialMedicoRepositoty.findOne({
       where: { id },
-      relations: ['enfermedades', 'historiaClinica'],
+      relations: ['historiaClinica'],
     });
     if (!historial) {
       throw new NotFoundException('Historial médico no encontrado');
@@ -80,6 +85,8 @@ export class HistorialMedicosService {
       historial.tratamientoActivo = updateHistorialMedicoDto.tratamientoActivo;
     if (updateHistorialMedicoDto.ultimaConsulta !== undefined)
       historial.ultimaConsulta = updateHistorialMedicoDto.ultimaConsulta;
+    if (updateHistorialMedicoDto.enfermedades !== undefined)
+      historial.enfermedades = updateHistorialMedicoDto.enfermedades;
 
     if (updateHistorialMedicoDto.historiaClinicaId !== undefined) {
       const historiaClinica = await this.historiaClinicaRepository.findOne({
@@ -91,20 +98,7 @@ export class HistorialMedicosService {
       historial.historiaClinica = historiaClinica;
     }
 
-    const updated = await this.historialMedicoRepositoty.save(historial);
-
-    if (updateHistorialMedicoDto.enfermedades !== undefined) {
-      await this.historialMedicoRepositoty
-        .createQueryBuilder()
-        .relation(HistorialMedico, 'enfermedades')
-        .of(updated.id)
-        .set(updateHistorialMedicoDto.enfermedades);
-    }
-
-    return await this.historialMedicoRepositoty.findOne({
-      where: { id: updated.id },
-      relations: ['enfermedades', 'historiaClinica'],
-    });
+    return await this.historialMedicoRepositoty.save(historial);
   }
 
   async remove(id: number) {
@@ -112,6 +106,6 @@ export class HistorialMedicosService {
     if (!historial) {
       throw new NotFoundException('Historial médico no encontrado');
     }
-    return await this.historialMedicoRepositoty.softDelete(historial);
+    return await this.historialMedicoRepositoty.softDelete(id);
   }
 }
