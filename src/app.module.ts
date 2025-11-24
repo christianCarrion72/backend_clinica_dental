@@ -17,6 +17,8 @@ import { EnfermedadsModule } from './enfermedads/enfermedads.module';
 import { EmbarazosModule } from './embarazos/embarazos.module';
 import { PlanTratamientosModule } from './plan-tratamientos/plan-tratamientos.module';
 import { ProcedimientosModule } from './procedimientos/procedimientos.module';
+import { OdontogramaModule } from './odontograma/odontograma.module';
+import { OdontrogramaVersionModule } from './odontrograma-version/odontrograma-version.module';
 
 @Module({
   imports: [
@@ -56,6 +58,8 @@ import { ProcedimientosModule } from './procedimientos/procedimientos.module';
     EmbarazosModule,
     PlanTratamientosModule,
     ProcedimientosModule,
+    OdontogramaModule,
+    OdontrogramaVersionModule,
   ],
   controllers: [],
   providers: [],
