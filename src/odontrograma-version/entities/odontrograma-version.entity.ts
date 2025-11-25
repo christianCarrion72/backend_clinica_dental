@@ -19,7 +19,7 @@ export class OdontrogramaVersion {
   nombreVersion: string;
 
   @Column({ type: 'jsonb' })
-  json: string;
+  json: Record<string, any>;
 
   @ManyToOne(
     () => Odontograma,

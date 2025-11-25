@@ -74,7 +74,7 @@ export class OdontrogramaVersionService {
     }
 
     if (updateDto.json !== undefined) {
-      version.json = updateDto.json;
+      version.json = { ...version.json, ...updateDto.json };
     }
 
     if (updateDto.odontogramaId !== undefined) {

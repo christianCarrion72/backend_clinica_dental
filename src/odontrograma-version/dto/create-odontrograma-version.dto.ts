@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsObject, IsString } from 'class-validator';
 
 export class CreateOdontrogramaVersionDto {
   @ApiProperty({
@@ -14,9 +14,9 @@ export class CreateOdontrogramaVersionDto {
     description: 'Contenido de la versión en JSON (como cadena)',
     example: '{"dientes":[]}',
   })
-  @IsString()
+  @IsObject()
   @IsNotEmpty()
-  json: string;
+  json: Record<string, any>;
 
   @ApiProperty({
     description: 'ID del odontograma al que pertenece esta versión',
