@@ -16,6 +16,8 @@ import { EnfermedadsModule } from './enfermedads/enfermedads.module';
 import { PlanTratamientosModule } from './plan-tratamientos/plan-tratamientos.module';
 import { ProcedimientosModule } from './procedimientos/procedimientos.module';
 import { AiModule } from './ai/ai.module';
+import { OdontogramaModule } from './odontograma/odontograma.module';
+import { OdontrogramaVersionModule } from './odontrograma-version/odontrograma-version.module';
 
 @Module({
   imports: [
@@ -54,6 +56,8 @@ import { AiModule } from './ai/ai.module';
     PlanTratamientosModule,
     ProcedimientosModule,
     AiModule,
+    OdontogramaModule,
+    OdontrogramaVersionModule,
   ],
   controllers: [],
   providers: [],

@@ -6,10 +6,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { EstadoCivil } from 'src/estado_civils/entities/estado_civil.entity';
 import { HistoriaClinica } from 'src/historia-clinicas/entities/historia-clinica.entity';
+import { Odontograma } from 'src/odontograma/entities/odontograma.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Paciente, EstadoCivil, HistoriaClinica]),
+    TypeOrmModule.forFeature([
+      Paciente,
+      EstadoCivil,
+      HistoriaClinica,
+      Odontograma,
+    ]),
     AuthModule,
   ],
   controllers: [PacientesController],

@@ -13,6 +13,7 @@ import { EstadoCivil } from '../../estado_civils/entities/estado_civil.entity';
 import { Familiar } from '../../familiars/entities/familiar.entity';
 import { Cita } from 'src/citas/entities/cita.entity';
 import { HistoriaClinica } from 'src/historia-clinicas/entities/historia-clinica.entity';
+import { Odontograma } from 'src/odontograma/entities/odontograma.entity';
 
 @Entity('pacientes')
 export class Paciente {
@@ -57,6 +58,9 @@ export class Paciente {
 
   @OneToMany(() => Cita, (cita) => cita.paciente)
   citas: Cita[];
+
+  @OneToOne(() => Odontograma, (odontograma) => odontograma.paciente)
+  odontograma: Odontograma;
 
   @CreateDateColumn()
   createdAt: Date;
